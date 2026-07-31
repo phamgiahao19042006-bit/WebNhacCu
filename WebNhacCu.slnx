@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CoreDatabase/CoreDatabase.csproj" />
+  <Project Path="WebNhacCu/WebNhacCu.csproj" />
+</Solution>
