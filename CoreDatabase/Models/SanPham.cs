@@ -53,7 +53,7 @@ namespace CoreDatabase.Models
         [Display(Name = "Trạng thái")]
         public bool TT { get; set; } = true;
 
-        // Relationship (Khoá ngoại)
+        //  (Khoá ngoại)
         [ForeignKey("MaLoai")]
         public virtual LoaiSP? LoaiSP { get; set; }
 

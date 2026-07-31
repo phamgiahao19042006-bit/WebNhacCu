@@ -1,20 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreDatabase.Models
 {
-    [Table("KhachHang")]
-    public class KhachHang
+    [Table("NhaCC")]
+    public class NhaCC
     {
         [Key]
         [StringLength(20)]
-        [Display(Name = "Mã khách hàng")]
-        public string MaKH { get; set; } = null!;
+        [Display(Name = "Mã nhà cung cấp")]
+        public string MaNCC { get; set; } = null!;
 
-        [Required(ErrorMessage = "Họ tên khách hàng không được để trống")]
-        [StringLength(100)]
-        [Display(Name = "Họ và tên")]
-        public string HoTen { get; set; } = null!;
+        [Required(ErrorMessage = "Tên nhà cung cấp không được để trống")]
+        [StringLength(150)]
+        [Display(Name = "Tên nhà cung cấp")]
+        public string TenNCC { get; set; } = null!;
 
         [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
         [StringLength(15)]
@@ -30,11 +31,10 @@ namespace CoreDatabase.Models
         [Display(Name = "Địa chỉ")]
         public string? DiaChi { get; set; }
 
-        [Display(Name = "Điểm tích lũy")]
-        [Range(0, int.MaxValue, ErrorMessage = "Điểm tích lũy phải lớn hơn hoặc bằng 0")]
-        public int DiemTichLuy { get; set; } = 0;
-
         [Display(Name = "Trạng thái")]
         public bool TT { get; set; } = true;
+
+        //  Một Nhà cung cấp có thể cung cấp nhiều Phiếu nhập
+        public virtual ICollection<PhieuNhap>? PhieuNhaps { get; set; }
     }
 }

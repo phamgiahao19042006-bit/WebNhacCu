@@ -1,9 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using WebNhacCu.Models.EF;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddDbContext<WebHeThongBanNhacCuContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("WebHeThongBanNhacCudb")));
 var app = builder.Build();
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
