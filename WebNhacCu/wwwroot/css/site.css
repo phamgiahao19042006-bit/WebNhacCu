@@ -1,31 +1,246 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+/* =========================================================
+   THEME COLOR PALETTE: Vàng đồng - Nâu gỗ - Trắng
+   ========================================================= */
+:root {
+    --bg-wood-dark: #2c1d11; /* Nâu gỗ đậm cho Sidebar */
+    --bg-wood-light: #3d2b1f; /* Nâu gỗ vừa cho Submenu/Hover */
+    --primary-gold: #c5a059; /* Vàng đồng chính */
+    --gold-hover: #e5b869; /* Vàng đồng sáng khi hover */
+    --bg-body: #f8f6f0; /* Trắng kem nền trang */
+    --text-light: #f5f5f5; /* Chữ màu trắng */
+    --text-muted: #b8a99a; /* Chữ mờ màu xám gỗ */
+    --border-color: #e2dcd5; /* Đường viền xám nhẹ */
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-body);
+    margin: 0;
+    padding: 0;
+    color: #333;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* --- Layout Wrapper --- */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+/* --- Sidebar (Nâu gỗ - Đã cố định) --- */
+.admin-sidebar {
+    width: 260px;
+    background-color: var(--bg-wood-dark);
+    color: var(--text-light);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    /* Cố định Sidebar */
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    z-index: 1000;
+    overflow-y: auto; /* Cuộn riêng nếu menu dài */
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    /* Thanh cuộn nhỏ đẹp cho Sidebar */
+    .admin-sidebar::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .admin-sidebar::-webkit-scrollbar-thumb {
+        background: var(--primary-gold);
+        border-radius: 10px;
+    }
+
+.sidebar-header {
+    padding: 20px;
+    background-color: rgba(0,0,0,0.15);
+    border-bottom: 2px solid var(--primary-gold);
+    text-align: center;
 }
+
+    .sidebar-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: var(--primary-gold);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+.sidebar-menu {
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+}
+
+    .sidebar-menu .menu-item {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        color: var(--text-light);
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+        .sidebar-menu a i.menu-icon {
+            margin-right: 10px;
+            color: var(--primary-gold);
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu .menu-item.active > a {
+            background-color: var(--bg-wood-light);
+            color: var(--primary-gold);
+        }
+
+/* Submenu / Accordion (Sổ xuống) */
+/* --- Sửa lại phần Submenu cho đúng chuẩn Bootstrap Collapse --- */
+.submenu {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    background-color: #21150c;
+}
+
+/* Loại bỏ display: none; cũ để tránh xung đột với hiệu ứng sổ xuống của Bootstrap */
+.collapse:not(.show) {
+    display: none;
+}
+
+.submenu a {
+    padding: 10px 20px 10px 45px;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    display: block;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+    .submenu a:hover {
+        color: #fff;
+        background-color: var(--bg-wood-light);
+    }
+/* --- Main Content Area (Đã dịch sang phải 260px) --- */
+.admin-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    /* Lề trái bằng chiều rộng Sidebar để không bị đè */
+    margin-left: 260px;
+    min-height: 100vh;
+}
+/* --- Topbar Header (Cố định ở đỉnh) --- */
+.admin-topbar {
+    height: 65px;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    /* Cố định Topbar khi cuộn */
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+/* Thanh tìm kiếm */
+.search-box {
+    position: relative;
+    width: 320px;
+}
+
+    .search-box input {
+        width: 100%;
+        padding: 8px 15px 8px 38px;
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        outline: none;
+        background-color: #fcfbf9;
+        font-size: 0.9rem;
+    }
+
+        .search-box input:focus {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 5px rgba(197, 160, 89, 0.4);
+        }
+
+    .search-box i {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+    }
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: var(--primary-gold);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* --- Container cho Nội dung chính --- */
+.main-body {
+    padding: 25px;
+    flex-grow: 1;
+}
+
+/* --- Custom Cards cho Dashboard --- */
+.stat-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    border-left: 4px solid var(--primary-gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+    .stat-card .stat-icon {
+        width: 50px;
+        height: 50px;
+        background-color: #fdf8f0;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-gold);
+        font-size: 1.5rem;
+    }
+
+    .stat-card .stat-title {
+        font-size: 0.85rem;
+        color: #777;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--bg-wood-dark);
+    }
