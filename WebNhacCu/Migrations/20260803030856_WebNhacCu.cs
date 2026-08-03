@@ -21,7 +21,11 @@ namespace WebNhacCu.Migrations
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DiaChi = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     DiemTichLuy = table.Column<int>(type: "int", nullable: false),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,7 +43,14 @@ namespace WebNhacCu.Migrations
                     NgayBatDau = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NgayKetThuc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DieuKienApDung = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    MetaTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaKeyword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,7 +64,14 @@ namespace WebNhacCu.Migrations
                     MaLoai = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     TenLoai = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     MoTa = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    MetaTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaKeyword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,7 +87,11 @@ namespace WebNhacCu.Migrations
                     SDT = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DiaChi = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,7 +109,11 @@ namespace WebNhacCu.Migrations
                     SDT = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DiaChi = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,7 +127,14 @@ namespace WebNhacCu.Migrations
                     MaTH = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     TenTH = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     QuocGia = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    MetaTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaKeyword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,7 +146,11 @@ namespace WebNhacCu.Migrations
                 columns: table => new
                 {
                     MaVaiTro = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    TenVaiTro = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    TenVaiTro = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,7 +165,11 @@ namespace WebNhacCu.Migrations
                     MaNCC = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     NgayNhap = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TongTien = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -153,7 +194,11 @@ namespace WebNhacCu.Migrations
                     GiamGia = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ThanhTien = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PhuongThucTT = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -184,7 +229,14 @@ namespace WebNhacCu.Migrations
                     SoLuongTon = table.Column<int>(type: "int", nullable: false),
                     HinhAnh = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     MoTa = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    MetaTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaKeyword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -212,7 +264,11 @@ namespace WebNhacCu.Migrations
                     MatKhau = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     MaNV = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     MaVaiTro = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    TT = table.Column<bool>(type: "bit", nullable: false)
+                    TT = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -239,7 +295,11 @@ namespace WebNhacCu.Migrations
                     MaSP = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false),
                     DonGia = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ThanhTien = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    ThanhTien = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -265,7 +325,11 @@ namespace WebNhacCu.Migrations
                     MaKM = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     MaSP = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     HeSo = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    SoLuong = table.Column<int>(type: "int", nullable: true)
+                    SoLuong = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -291,7 +355,11 @@ namespace WebNhacCu.Migrations
                     MaPN = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     MaSP = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false),
-                    DonGiaNhap = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    DonGiaNhap = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

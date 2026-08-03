@@ -12,7 +12,7 @@ using WebNhacCu.Models.EF;
 namespace WebNhacCu.Migrations
 {
     [DbContext(typeof(WebHeThongBanNhacCuContext))]
-    [Migration("20260731084236_WebNhacCu")]
+    [Migration("20260803030856_WebNhacCu")]
     partial class WebNhacCu
     {
         /// <inheritdoc />
@@ -35,6 +35,13 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("DonGia")
                         .HasColumnType("decimal(18,2)");
 
@@ -43,6 +50,13 @@ namespace WebNhacCu.Migrations
 
                     b.Property<decimal>("ThanhTien")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("MaHD", "MaSP");
 
@@ -61,11 +75,25 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal?>("HeSo")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("SoLuong")
                         .HasColumnType("int");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("MaKM", "MaSP");
 
@@ -84,11 +112,25 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("DonGiaNhap")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SoLuong")
                         .HasColumnType("int");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("MaPN", "MaSP");
 
@@ -102,6 +144,13 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("MaHD")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("GiamGia")
                         .HasColumnType("decimal(18,2)");
@@ -131,6 +180,13 @@ namespace WebNhacCu.Migrations
                     b.Property<decimal>("TongTien")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaHD");
 
                     b.HasIndex("MaKH");
@@ -145,6 +201,13 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("MaKH")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DiaChi")
                         .HasMaxLength(255)
@@ -169,6 +232,13 @@ namespace WebNhacCu.Migrations
                     b.Property<bool>("TT")
                         .HasColumnType("bit");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaKH");
 
                     b.ToTable("KhachHang");
@@ -180,6 +250,13 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("DieuKienApDung")
                         .HasColumnType("nvarchar(max)");
 
@@ -189,6 +266,18 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("LoaiGiam")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("MetaDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaKeyword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NgayBatDau")
                         .HasColumnType("datetime2");
@@ -204,6 +293,13 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaKM");
 
                     b.ToTable("KhuyenMai");
@@ -214,6 +310,25 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("MaLoai")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MetaDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaKeyword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MoTa")
                         .HasMaxLength(500)
@@ -227,6 +342,13 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaLoai");
 
                     b.ToTable("LoaiSP");
@@ -237,6 +359,13 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("MaNCC")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DiaChi")
                         .HasMaxLength(255)
@@ -258,6 +387,13 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaNCC");
 
                     b.ToTable("NhaCC");
@@ -268,6 +404,13 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("MaNV")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DiaChi")
                         .HasMaxLength(255)
@@ -296,6 +439,13 @@ namespace WebNhacCu.Migrations
                     b.Property<bool>("TT")
                         .HasColumnType("bit");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaNV");
 
                     b.ToTable("NhanVien");
@@ -306,6 +456,13 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("MaPN")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MaNCC")
                         .IsRequired()
@@ -321,6 +478,13 @@ namespace WebNhacCu.Migrations
                     b.Property<decimal>("TongTien")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaPN");
 
                     b.HasIndex("MaNCC");
@@ -333,6 +497,13 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("MaSP")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("DonGia")
                         .HasColumnType("decimal(18,2)");
@@ -354,6 +525,18 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("MetaDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaKeyword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("MoTa")
                         .HasColumnType("nvarchar(max)");
 
@@ -367,6 +550,13 @@ namespace WebNhacCu.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("MaSP");
 
@@ -382,6 +572,13 @@ namespace WebNhacCu.Migrations
                     b.Property<string>("MaTK")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MaNV")
                         .IsRequired()
@@ -406,6 +603,13 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaTK");
 
                     b.HasIndex("MaNV")
@@ -422,6 +626,25 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MetaDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaKeyword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("QuocGia")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -434,6 +657,13 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("MaTH");
 
                     b.ToTable("ThuongHieu");
@@ -445,10 +675,24 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("TenVaiTro")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("MaVaiTro");
 
