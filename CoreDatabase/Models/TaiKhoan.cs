@@ -1,11 +1,12 @@
 ﻿using System;
+using CoreDatabase.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreDatabase.Models
 {
     [Table("TaiKhoan")]
-    public class TaiKhoan
+    public class TaiKhoan : IAuditable
     {
         [Key]
         [StringLength(20)]
@@ -42,5 +43,11 @@ namespace CoreDatabase.Models
 
         [ForeignKey("MaVaiTro")]
         public virtual VaiTro? VaiTro { get; set; }
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }

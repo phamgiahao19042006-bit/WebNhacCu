@@ -1,4 +1,5 @@
 ﻿using System;
+using CoreDatabase.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +8,7 @@ using System.Text;
 namespace CoreDatabase.Models
 {
     [Table("NhanVien")]
-    public class NhanVien
+    public class NhanVien : IAuditable
     {
         [Key]
         [StringLength(20)]
@@ -46,5 +47,11 @@ namespace CoreDatabase.Models
 
         //  Một nhân viên có tài khoản tương ứng
         public virtual TaiKhoan? TaiKhoan { get; set; }
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,6 @@
-﻿using CoreDatabase.Models;
+﻿using System;
+using CoreDatabase.Interfaces;
+using CoreDatabase.Models;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +9,7 @@ namespace CoreDatabase.Models
 {
     [Table("CTHoaDon")]
     [PrimaryKey(nameof(MaHD), nameof(MaSP))] // Định nghĩa khóa chính phức hợp (Composite Key)
-    public class CTHoaDon
+    public class CTHoaDon : IAuditable
     {
         [StringLength(20)]
         [Display(Name = "Mã hóa đơn")]
@@ -37,5 +39,11 @@ namespace CoreDatabase.Models
 
         [ForeignKey("MaSP")]
         public virtual SanPham? SanPham { get; set; }
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }

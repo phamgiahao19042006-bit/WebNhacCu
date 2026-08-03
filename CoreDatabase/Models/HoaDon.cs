@@ -1,4 +1,5 @@
-﻿using CoreDatabase.Models;
+﻿using CoreDatabase.Interfaces;
+using CoreDatabase.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CoreDatabase.Models
 {
     [Table("HoaDon")]
-    public class HoaDon
+    public class HoaDon : IAuditable
     {
         [Key]
         [StringLength(20)]
@@ -58,5 +59,11 @@ namespace CoreDatabase.Models
 
         // Navigation Property: Một hóa đơn chứa nhiều chi tiết hóa đơn
         public virtual ICollection<CTHoaDon>? CTHoaDons { get; set; }
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }

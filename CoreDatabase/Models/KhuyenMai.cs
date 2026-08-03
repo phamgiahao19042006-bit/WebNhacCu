@@ -1,4 +1,5 @@
 ﻿using System;
+using CoreDatabase.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CoreDatabase.Models
 {
     [Table("KhuyenMai")]
-    public class KhuyenMai
+    public class KhuyenMai : IAuditable, IMeta
     {
         [Key]
         [StringLength(20)]
@@ -43,5 +44,16 @@ namespace CoreDatabase.Models
 
         // Một chương trình khuyến mãi áp dụng cho nhiều sản phẩm trong CTKhuyenMai
         public virtual ICollection<CTKhuyenMai>? CTKhuyenMais { get; set; }
+
+        // Meta
+        public string MetaTitle { get; set; } = string.Empty;
+        public string MetaKeyword { get; set; } = string.Empty;
+        public string MetaDescription { get; set; } = string.Empty;
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }

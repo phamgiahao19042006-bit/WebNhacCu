@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using CoreDatabase.Interfaces;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreDatabase.Models
 {
     [Table("NhaCC")]
-    public class NhaCC
+    public class NhaCC : IAuditable
     {
         [Key]
         [StringLength(20)]
@@ -36,5 +38,11 @@ namespace CoreDatabase.Models
 
         //  Một Nhà cung cấp có thể cung cấp nhiều Phiếu nhập
         public virtual ICollection<PhieuNhap>? PhieuNhaps { get; set; }
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }

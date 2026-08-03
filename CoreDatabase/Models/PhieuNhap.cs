@@ -1,5 +1,6 @@
-﻿using CoreDatabase.Models;
-using System;
+﻿using System;
+using CoreDatabase.Interfaces;
+using CoreDatabase.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CoreDatabase.Models
 {
     [Table("PhieuNhap")]
-    public class PhieuNhap
+    public class PhieuNhap : IAuditable
     {
         [Key]
         [StringLength(20)]
@@ -37,5 +38,11 @@ namespace CoreDatabase.Models
 
         //  Một phiếu nhập có nhiều chi tiết phiếu nhập
         public virtual ICollection<CTPhieuNhap>? CTPhieuNhaps { get; set; }
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }

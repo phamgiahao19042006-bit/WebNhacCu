@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using CoreDatabase.Interfaces;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreDatabase.Models
 {
     [Table("KhachHang")]
-    public class KhachHang
+    public class KhachHang : IAuditable
     {
         [Key]
         [StringLength(20)]
@@ -36,5 +38,11 @@ namespace CoreDatabase.Models
 
         [Display(Name = "Trạng thái")]
         public bool TT { get; set; } = true;
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }

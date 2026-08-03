@@ -1,11 +1,12 @@
 ﻿using System;
+using CoreDatabase.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreDatabase.Models
 {
     [Table("VaiTro")]
-    public class VaiTro
+    public class VaiTro : IAuditable
     {
         [Key]
         [StringLength(20)]
@@ -19,5 +20,11 @@ namespace CoreDatabase.Models
 
         //  Một vai trò có thể gán cho nhiều Tài khoản
         public virtual ICollection<TaiKhoan>? TaiKhoans { get; set; }
+
+        // Audit
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
     }
 }
