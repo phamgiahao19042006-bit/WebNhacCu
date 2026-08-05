@@ -1,6 +1,6 @@
 ﻿@model CoreDatabase.Models.LoaiSP
 @{
-    ViewData["Title"] = "Cập Nhật Loại Sản Phẩm";
+    ViewData["Title"] = "Thêm Loại Sản Phẩm";
     Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
 }
 
@@ -9,40 +9,24 @@
         <div class="col-md-8">
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-header bg-white py-3" style="border-bottom: 2px solid #c5a059;">
-                    <h5 class="m-0 fw-bold" style="color: #2c1d11;"><i class="fa-solid fa-pen-to-square me-2"></i>Cập Nhật Loại Sản Phẩm</h5>
+                    <h5 class="m-0 fw-bold" style="color: #2c1d11;"><i class="fa-solid fa-plus me-2"></i>Thêm Loại Sản Phẩm Mới</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form asp-area="Admin" asp-controller="LoaiSanPham" asp-action="Edit" method="post">
-                        <input type="hidden" asp-for="MaLoai" />
+                    <form asp-area="Admin" asp-controller="LoaiSanPham" asp-action="Create" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                        <!-- Mã loại (Readonly) -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-muted">Mã loại sản phẩm</label>
-                            <input value="@Model.MaLoai" class="form-control bg-light" readonly />
-                        </div>
 
                         <!-- Tên loại -->
                         <div class="mb-3">
                             <label asp-for="TenLoai" class="form-label fw-bold">Tên loại sản phẩm <span class="text-danger">*</span></label>
-                            <input asp-for="TenLoai" class="form-control" required />
+                            <input asp-for="TenLoai" class="form-control" placeholder="Nhập tên loại (VD: Đàn Guitar, Piano...)" required />
                             <span asp-validation-for="TenLoai" class="text-danger fs-7"></span>
                         </div>
 
                         <!-- Mô tả -->
-                        <div class="mb-3">
-                            <label asp-for="MoTa" class="form-label fw-bold">Mô tả</label>
-                            <textarea asp-for="MoTa" class="form-control" rows="4"></textarea>
-                            <span asp-validation-for="MoTa" class="text-danger fs-7"></span>
-                        </div>
-
-                        <!-- Trạng thái -->
                         <div class="mb-4">
-                            <label asp-for="TT" class="form-label fw-bold">Trạng thái kinh doanh</label>
-                            <select asp-for="TT" class="form-select">
-                                <option value="true">Đang kinh doanh</option>
-                                <option value="false">Dừng kinh doanh</option>
-                            </select>
+                            <label asp-for="MoTa" class="form-label fw-bold">Mô tả</label>
+                            <textarea asp-for="MoTa" class="form-control" rows="4" placeholder="Nhập mô tả chi tiết..."></textarea>
+                            <span asp-validation-for="MoTa" class="text-danger fs-7"></span>
                         </div>
 
                         <!-- Nút thao tác -->
