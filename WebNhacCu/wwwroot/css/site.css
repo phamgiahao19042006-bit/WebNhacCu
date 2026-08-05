@@ -155,51 +155,77 @@ body {
 }
 
 /* Thanh tìm kiếm */
+/* --- Khung gợi ý tìm kiếm (Search Dropdown) --- */
 .search-box {
     position: relative;
-    width: 320px;
+    width: 380px;
 }
 
-    .search-box input {
-        width: 100%;
-        padding: 8px 15px 8px 38px;
-        border-radius: 20px;
-        border: 1px solid var(--border-color);
-        outline: none;
-        background-color: #fcfbf9;
+.search-results-dropdown {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-color);
+    max-height: 380px;
+    overflow-y: auto;
+    z-index: 1050;
+    display: none;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    text-decoration: none;
+    color: #333;
+    transition: background 0.2s;
+}
+
+    .search-result-item:hover {
+        background-color: #fdf8f0;
+    }
+
+    .search-result-item .item-icon {
+        width: 35px;
+        height: 35px;
+        background-color: #f4ece1;
+        color: var(--primary-gold);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
         font-size: 0.9rem;
     }
 
-        .search-box input:focus {
-            border-color: var(--primary-gold);
-            box-shadow: 0 0 5px rgba(197, 160, 89, 0.4);
-        }
-
-    .search-box i {
-        position: absolute;
-        left: 13px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #888;
+    .search-result-item .item-info {
+        flex-grow: 1;
     }
 
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+    .search-result-item .item-title {
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--bg-wood-dark);
+    }
 
-.user-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background-color: var(--primary-gold);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
+    .search-result-item .item-sub {
+        font-size: 0.78rem;
+        color: #777;
+    }
+
+    .search-result-item .item-type {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background-color: #eee;
+        color: #555;
+        font-weight: bold;
+    }
 
 /* --- Container cho Nội dung chính --- */
 .main-body {
