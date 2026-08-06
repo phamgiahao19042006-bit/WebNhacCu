@@ -27,7 +27,22 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
-    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Views\Cart\" />
+    <Folder Include="Views\Checkout\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="Views\Contact\" />
+    <Folder Include="Views\News\" />
+    <Folder Include="Views\Product\" />
+    <Folder Include="wwwroot\image\banners\" />
+    <Folder Include="wwwroot\image\brands\" />
+    <Folder Include="wwwroot\image\categories\" />
+    <Folder Include="wwwroot\image\avatars\" />
+    <Folder Include="wwwroot\image\icons\" />
+    <Folder Include="wwwroot\image\news\" />
+    <Folder Include="wwwroot\image\products\" />
+    <Folder Include="wwwroot\uploads\customers\" />
+    <Folder Include="wwwroot\uploads\employees\" />
+    <Folder Include="wwwroot\uploads\products\" />
   </ItemGroup>
 
 </Project>

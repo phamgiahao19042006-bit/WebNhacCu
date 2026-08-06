@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebNhacCu.Data;
 using WebNhacCu.Models.EF;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<WebHeThongBanNhacCuContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("WebHeThongBanNhacCudb")));
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<WebHeThongBanNhacCuContext>();
+
+    DataSeeder.Seed(context);
+}
 
 
 // Configure the HTTP request pipeline.
