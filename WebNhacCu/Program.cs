@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore.Diagnostics;
+=======
+using WebNhacCu.Data;
+>>>>>>> 0b948152837b785c2ae07eac8381a7882d2c1566
 using WebNhacCu.Models.EF;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +15,15 @@ builder.Services.AddDbContext<WebHeThongBanNhacCuContext>(options =>
            .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
 );
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<WebHeThongBanNhacCuContext>();
+
+    DataSeeder.Seed(context);
+}
 
 
 // Configure the HTTP request pipeline.
