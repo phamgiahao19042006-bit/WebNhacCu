@@ -1,0 +1,70 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model CoreDatabase.Models.ThuongHieu
+
+@{
+    ViewData["Title"] = "Cập Nhật Thương Hiệu";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4">
+    <div class="card border-0 shadow-sm" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-header bg-warning text-dark fw-bold">
+            CẬP NHẬT THƯƠNG HIỆU
+        </div>
+        <div class="card-body">
+
+            <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
+
+            <form action="/Admin/ThuongHieu/Edit/@Model.MaTH" method="post">
+
+                <!-- Lưu các giá trị ẩn bắt buộc -->
+                <input type="hidden" name="MaTH" value="@Model.MaTH" />
+                <input type="hidden" name="CreatedDate" value="@Model.CreatedDate" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mã thương hiệu</label>
+                    <input type="text" class="form-control" value="@Model.MaTH" disabled readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên thương hiệu</label>
+                    <input type="text" name="TenTH" class="form-control" value="@Model.TenTH" placeholder="Nhập tên thương hiệu..." required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mô tả</label>
+                    <textarea name="MoTa" class="form-control" rows="3" placeholder="Mô tả...">@Model.QuocGia</textarea>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a href="/Admin/ThuongHieu" class="btn btn-secondary me-2">Hủy</a>
+                    <button type="submit" class="btn btn-primary">Cập Nhật</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- KHI CẬP NHẬT THÀNH CÔNG: BẬT SWEETALERT -> BẤM OK MỚI VỀ TRANG DANH SÁCH -->
+@if (ViewBag.IsSuccess == true)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                title: 'Cập nhật thành công!',
+                text: 'Thông tin thương hiệu đã được cập nhật vào CSDL.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#0d6efd',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/Admin/ThuongHieu';
+                }
+            });
+        });
+    </script>
+}

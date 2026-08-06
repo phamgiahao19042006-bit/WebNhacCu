@@ -38,5 +38,4 @@ app.MapAreaControllerRoute(
     areaName: "Admin",
     pattern: "Admin/{controller=Home}/{action=Index}/{id?}"
     );
-
 app.Run();
