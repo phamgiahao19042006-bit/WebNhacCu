@@ -1,0 +1,75 @@
+﻿@model CoreDatabase.Models.KhuyenMai
+@{
+    ViewData["Title"] = "Thêm Khuyến Mãi Mới";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-tag fs-3 text-primary"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">THÊM KHUYẾN MÃI MỚI</h3>
+        </div>
+        <a href="/Admin/KhuyenMai/Index" class="btn btn-outline-secondary btn-sm fw-semibold">
+            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-dark">Mã Khuyến Mãi <span class="text-danger">*</span></label>
+                    <input asp-for="MaKM" class="form-control" placeholder="Ví dụ: KM0001" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-dark">Tên Chương Trình Khuyến Mãi <span class="text-danger">*</span></label>
+                    <input asp-for="TenKhuyenMai" class="form-control" placeholder="Ví dụ: Giảm giá mùa hè" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-dark">Loại Giảm</label>
+                    <select asp-for="LoaiGiam" class="form-select">
+                        <option value="Giảm theo %">Giảm theo %</option>
+                        <option value="Giảm theo tiền">Giảm theo tiền</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-dark">Giá Trị Giảm <span class="text-danger">*</span></label>
+                    <input asp-for="GiaTriGiam" type="number" step="any" class="form-control" placeholder="Ví dụ: 10 (nếu là %) hoặc 50000" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-dark">Ngày Bắt Đầu <span class="text-danger">*</span></label>
+                    <input asp-for="NgayBatDau" type="date" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-dark">Ngày Kết Thúc <span class="text-danger">*</span></label>
+                    <input asp-for="NgayKetThuc" type="date" class="form-control" required />
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label fw-bold text-dark">Điều Kiện Áp Dụng</label>
+                    <input asp-for="DieuKienApDung" class="form-control" placeholder="Ví dụ: Đơn hàng từ 500,000đ" />
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" asp-for="TT" checked>
+                        <label class="form-check-label fw-bold text-dark">Kích hoạt ngay (Trạng thái)</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 border-top pt-3 text-end">
+                <a href="/Admin/KhuyenMai/Index" class="btn btn-light border me-2">Hủy</a>
+                <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                    <i class="fa-solid fa-floppy-disk me-1"></i> Lưu Khuyến Mãi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
