@@ -1,0 +1,172 @@
+﻿@model IEnumerable<CoreDatabase.Models.KhuyenMai>
+@{
+    ViewData["Title"] = "Danh Sách Khuyến Mãi";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <!-- Header (Đã bỏ Breadcrumb bên phải) -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-tag fs-3 text-primary"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">KHUYẾN MÃI</h3>
+        </div>
+    </div>
+
+    <!-- Nút Thêm mới  -->
+    <div class="mb-3">
+        <a href="/Admin/KhuyenMai/Create" class="btn btn-primary fw-semibold shadow-sm px-3">
+            <i class="fa-solid fa-plus me-1"></i> Thêm khuyến mãi
+        </a>
+    </div>
+
+    <!-- Thanh Lọc / Tìm kiếm -->
+    <div class="card border-0 shadow-sm p-3 mb-3">
+        <form method="get" action="/Admin/KhuyenMai/Index" class="row g-2 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted mb-1">Tìm kiếm:</label>
+                <div class="input-group input-group-sm">
+                    <input type="text" name="search" class="form-control" placeholder="Nhập mã KM, tên khuyến mãi..." value="@Context.Request.Query["search"]">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted mb-1">Từ ngày:</label>
+                <input type="date" name="tuNgay" class="form-control form-control-sm" value="@Context.Request.Query["tuNgay"]">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted mb-1">Đến ngày:</label>
+                <input type="date" name="denNgay" class="form-control form-control-sm" value="@Context.Request.Query["denNgay"]">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted mb-1">Loại giảm:</label>
+                <select name="loaiGiam" class="form-select form-select-sm">
+                    <option value="">Tất cả</option>
+                    <option value="Giảm theo %">Giảm theo %</option>
+                    <option value="Giảm theo tiền">Giảm theo tiền</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted mb-1">Trạng thái:</label>
+                <select name="trangThai" class="form-select form-select-sm">
+                    <option value="">Tất cả</option>
+                    <option value="true">Đang diễn ra</option>
+                    <option value="false">Chưa diễn ra / Kết thúc</option>
+                </select>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary btn-sm w-100 fw-semibold">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Tìm
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bảng Danh Sách -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center" style="font-size: 13px;">
+                    <thead class="bg-light border-bottom fw-bold text-dark">
+                        <tr>
+                            <th class="py-2">Mã KM</th>
+                            <th class="py-2">Tên khuyến mãi</th>
+                            <th class="py-2">Loại giảm</th>
+                            <th class="py-2">Giá trị giảm</th>
+                            <th class="py-2">Ngày bắt đầu</th>
+                            <th class="py-2">Ngày kết thúc</th>
+                            <th class="py-2">Điều kiện áp dụng</th>
+                            <th class="py-2">Trạng thái</th>
+                            <th class="py-2">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                DateTime now = DateTime.Now;
+                                bool isDangDienRa = item.TT && item.NgayBatDau <= now && item.NgayKetThuc >= now;
+                                <tr>
+                                    <td class="fw-bold">@item.MaKM</td>
+                                    <td class="fw-semibold text-start">@item.TenKhuyenMai</td>
+                                    <td>@item.LoaiGiam</td>
+                                    <td class="fw-bold text-danger">
+                                        @(item.LoaiGiam != null && item.LoaiGiam.Contains("%") ? $"{item.GiaTriGiam:N0}%" : $"{item.GiaTriGiam:N0}đ")
+                                    </td>
+                                    <td>@item.NgayBatDau.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-start">@(string.IsNullOrEmpty(item.DieuKienApDung) ? "Tất cả sản phẩm" : item.DieuKienApDung)</td>
+                                    <td>
+                                        @if (isDangDienRa)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">Đang diễn ra</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill">Chưa/Đã kết thúc</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <!-- 3 Nút Thao tác: Xem Chi Tiết, Sửa, Xóa -->
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <a href="/Admin/KhuyenMai/Details/@item.MaKM" class="btn btn-sm btn-light text-primary border-0" title="Xem chi tiết">
+                                                <i class="fa-regular fa-eye fs-6"></i>
+                                            </a>
+                                            <a href="/Admin/KhuyenMai/Edit/@item.MaKM" class="btn btn-sm btn-light text-warning border-0" title="Sửa">
+                                                <i class="fa-regular fa-pen-to-square fs-6"></i>
+                                            </a>
+                                            <button type="button" onclick="confirmDelete('@item.MaKM')" class="btn btn-sm btn-light text-danger border-0" title="Xóa">
+                                                <i class="fa-regular fa-trash-can fs-6"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">Không tìm thấy dữ liệu khuyến mãi nào!</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Xóa chương trình khuyến mãi " + id + " và tất cả chi tiết liên quan?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Admin/KhuyenMai/Delete/' + id, {
+                    method: 'POST'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Đã xóa!', data.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    });
+            }
+        });
+    }
+</script>

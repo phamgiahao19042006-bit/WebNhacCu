@@ -1,0 +1,85 @@
+﻿@model CoreDatabase.Models.HoaDon
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Hóa Đơn";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="fa-solid fa-pen-to-square fs-3 text-primary"></i>
+        <h3 class="fw-bold m-0 text-primary text-uppercase">CẬP NHẬT HÓA ĐƠN</h3>
+    </div>
+
+    <div class="card border-0 shadow-sm col-lg-8 mx-auto" style="border-radius: 8px;">
+        <div class="card-body p-4">
+            <form action="/Admin/HoaDon/Edit" method="post" class="row g-3">
+                <!-- Mã Hóa Đơn (Khóa chính - Không cho sửa) -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Mã Hóa Đơn</label>
+                    <input type="text" name="MaHD" value="@Model.MaHD" class="form-control bg-light" readonly />
+                </div>
+
+                <!-- Ngày lập -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Ngày Lập</label>
+                    <input type="text" value="@Model.NgayLap.ToString("dd/MM/yyyy HH:mm")" class="form-control bg-light" readonly />
+                </div>
+
+                <!-- Mã Khách Hàng -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Khách Hàng</label>
+                    <input type="text" name="MaKH" value="@Model.MaKH" class="form-control" required />
+                </div>
+
+                <!-- Mã Nhân Viên -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Nhân Viên</label>
+                    <input type="text" name="MaNV" value="@Model.MaNV" class="form-control" required />
+                </div>
+
+                <!-- Tổng tiền -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Tổng Tiền (VNĐ)</label>
+                    <input type="number" name="TongTien" value="@Model.TongTien" class="form-control" required />
+                </div>
+
+                <!-- Giảm giá -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Giảm Giá (VNĐ)</label>
+                    <input type="number" name="GiamGia" value="@Model.GiamGia" class="form-control" />
+                </div>
+
+                <!-- Phương thức thanh toán -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Phương Thức TT</label>
+                    <select name="PhuongThucTT" class="form-select">
+                        <option value="Tiền mặt" selected="@(Model.PhuongThucTT == "Tiền mặt")">Tiền mặt</option>
+                        <option value="Chuyển khoản" selected="@(Model.PhuongThucTT == "Chuyển khoản")">Chuyển khoản</option>
+                        <option value="Thẻ ngân hàng" selected="@(Model.PhuongThucTT == "Thẻ ngân hàng")">Thẻ ngân hàng</option>
+                    </select>
+                </div>
+
+                <!-- Trạng thái -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Trạng Thái</label>
+                    <select name="TT" class="form-select">
+                        <option value="true" selected="@(Model.TT == true)">Hoàn thành</option>
+                        <option value="false" selected="@(Model.TT == false)">Đã hủy</option>
+                    </select>
+                </div>
+
+                <div class="col-12 text-end mt-4">
+                    <a href="/Admin/HoaDon/Index" class="btn btn-secondary px-4 fw-semibold me-2">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

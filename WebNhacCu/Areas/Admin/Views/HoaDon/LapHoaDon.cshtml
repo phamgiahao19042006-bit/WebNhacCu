@@ -1,0 +1,85 @@
+﻿@model CoreDatabase.Models.HoaDon
+
+@{
+    ViewData["Title"] = "Lập Hóa Đơn";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4">
+    <h3 class="fw-bold mb-4 text-uppercase">🛒 LẬP HÓA ĐƠN MỚI</h3>
+
+    <div class="card shadow-sm border-0" style="border-radius: 10px;">
+        <div class="card-header bg-dark text-white fw-bold">NHẬP THÔNG TIN HÓA ĐƠN (HoaDon)</div>
+        <div class="card-body">
+            <form action="/Admin/HoaDon/LapHoaDon" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Mã Hóa Đơn <span class="text-danger">*</span></label>
+                        <input type="text" name="MaHD" value="@Model.MaHD" class="form-control" required readonly />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Ngày Lập</label>
+                        <input type="datetime-local" name="NgayLap" value="@Model.NgayLap.ToString("yyyy-MM-ddTHH:mm")" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Khách Hàng (MaKH)</label>
+                        <select name="MaKH" class="form-select" required>
+                            @if (ViewBag.KhachHang != null)
+                            {
+                                foreach (var kh in ViewBag.KhachHang)
+                                {
+                                    <option value="@kh.MaKH">@kh.MaKH - @kh.HoTen</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Nhân Viên Lập (MaNV)</label>
+                        <select name="MaNV" class="form-select" required>
+                            @if (ViewBag.NhanVien != null)
+                            {
+                                foreach (var nv in ViewBag.NhanVien)
+                                {
+                                    <option value="@nv.MaNV">@nv.MaNV - @nv.HoTen</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Phương Thức Thanh Toán</label>
+                        <select name="PhuongThucTT" class="form-select">
+                            <option value="Tiền mặt">Tiền mặt</option>
+                            <option value="Chuyển khoản">Chuyển khoản</option>
+                            <option value="Thẻ">Thẻ ATM / Visa</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Giảm Giá (VNĐ)</label>
+                        <input type="number" name="GiamGia" value="0" min="0" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Trạng Thái (TT)</label>
+                        <select name="TT" class="form-select">
+                            <option value="true">Đã thanh toán</option>
+                            <option value="false">Chưa thanh toán</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 text-end mt-4">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold px-5">💾 XÁC NHẬN LẬP HÓA ĐƠN</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

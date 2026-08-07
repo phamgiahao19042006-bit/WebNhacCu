@@ -1,0 +1,198 @@
+﻿@model IEnumerable<CoreDatabase.Models.KhachHang>
+
+@{
+    ViewData["Title"] = "Quản lý Khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<!-- Thư viện SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4">
+    <h3 class="fw-bold mb-4 text-uppercase">👥 QUẢN LÝ KHÁCH HÀNG</h3>
+
+    <!-- KHUNG NHẬP THÔNG TIN KHÁCH HÀNG (Ở TRÊN) -->
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 10px;">
+        <div class="card-header bg-dark text-white fw-bold">
+            <span id="formTitle">THÊM MỚI / CẬP NHẬT KHÁCH HÀNG</span>
+        </div>
+        <div class="card-body">
+            <form action="/Admin/KhachHang/Save" method="post" id="khachHangForm">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <!-- Mã KH -->
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Mã KH <span class="text-danger">*</span></label>
+                        <input type="text" name="MaKH" id="MaKH" class="form-control" placeholder="VD: KH01" required />
+                    </div>
+
+                    <!-- Họ Tên -->
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold">Họ & Tên <span class="text-danger">*</span></label>
+                        <input type="text" name="HoTen" id="HoTen" class="form-control" placeholder="Nhập họ và tên..." required />
+                    </div>
+
+                    <!-- Số Điện Thoại -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Số điện thoại</label>
+                        <input type="text" name="SDT" id="SDT" class="form-control" placeholder="VD: 0901234567" />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Email</label>
+                        <input type="email" name="Email" id="Email" class="form-control" placeholder="VD: example@gmail.com" />
+                    </div>
+
+                    <!-- Địa Chỉ -->
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">Địa chỉ</label>
+                        <input type="text" name="DiaChi" id="DiaChi" class="form-control" placeholder="Nhập địa chỉ khách hàng..." />
+                    </div>
+
+                    <!-- Điểm Tích Lũy -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Điểm tích lũy</label>
+                        <input type="number" name="DiemTichLuy" id="DiemTichLuy" class="form-control" value="0" min="0" />
+                    </div>
+
+                    <!-- Trạng Thái (TT) -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Trạng thái (TT)</label>
+                        <select name="TT" id="TT" class="form-select">
+                            <option value="true">Hoạt động</option>
+                            <option value="false">Khóa</option>
+                        </select>
+                    </div>
+
+                    <!-- Nút Thao Tác (Đã xóa nút Làm mới) -->
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-success fw-bold px-4 w-100" style="height: 38px;">
+                            💾 Lưu thông tin
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BẢNG DỮ LIỆU KHÁCH HÀNG (Ở DƯỚI) -->
+    <div class="card shadow-sm border-0" style="border-radius: 10px;">
+        <div class="card-header bg-secondary text-white fw-bold">
+            DANH SÁCH KHÁCH HÀNG
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover align-middle m-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 10%;">Mã KH</th>
+                        <th style="width: 20%;">Họ & Tên</th>
+                        <th style="width: 12%;">SĐT</th>
+                        <th style="width: 18%;">Email</th>
+                        <th style="width: 20%;">Địa Chỉ</th>
+                        <th style="width: 8%;" class="text-center">Điểm</th>
+                        <th style="width: 7%;" class="text-center">TT</th>
+                        <th style="width: 10%;" class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            // Ép kiểu TT về chuỗi 'true' hoặc 'false' an toàn tuyệt đối
+                            var statusValue = (item.TT == true).ToString().ToLower();
+
+                            <tr>
+                                <td class="fw-bold">#@item.MaKH</td>
+                                <td class="text-primary fw-bold">@item.HoTen</td>
+                                <td>@item.SDT</td>
+                                <td>@item.Email</td>
+                                <td>@item.DiaChi</td>
+                                <td class="text-center fw-bold text-success">@item.DiemTichLuy</td>
+                                <td class="text-center">
+                                    <span class="badge @(item.TT == true ? "bg-success" : "bg-danger")">
+                                        @(item.TT == true ? "Hoạt động" : "Khóa")
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <!-- NÚT SỬA -->
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-warning me-1" 
+                                            title="Sửa"
+                                            onclick="suaKhachHang('@item.MaKH', '@Html.Raw(item.HoTen)', '@item.SDT', '@item.Email', '@Html.Raw(item.DiaChi)', '@item.DiemTichLuy', '@statusValue')">
+                                        ✏️
+                                    </button>
+
+                                    <!-- NÚT XÓA -->
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-danger" 
+                                            title="Xóa"
+                                            onclick="confirmDelete('@item.MaKH', '@Html.Raw(item.HoTen)')">
+                                        🗑️
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted p-3">Chưa có dữ liệu khách hàng.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT XỬ LÝ -->
+<script>
+    // Hàm đẩy dữ liệu khách hàng lên khung nhập liệu ở trên
+    function suaKhachHang(maKH, hoTen, sdt, email, diaChi, diem, tt) {
+        document.getElementById('MaKH').value = maKH;
+        document.getElementById('MaKH').readOnly = true; // Khóa Mã KH không cho sửa
+        document.getElementById('HoTen').value = hoTen;
+        document.getElementById('SDT').value = sdt;
+        document.getElementById('Email').value = email;
+        document.getElementById('DiaChi').value = diaChi;
+        document.getElementById('DiemTichLuy').value = diem;
+        document.getElementById('TT').value = tt;
+
+        document.getElementById('formTitle').innerText = "CẬP NHẬT KHÁCH HÀNG: " + maKH;
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Cuộn nhẹ lên trên
+    }
+
+    // Thông báo từ TempData
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <text>
+        Swal.fire({
+            title: 'Thành công!',
+            text: '@TempData["SuccessMessage"]',
+            icon: 'success',
+            confirmButtonColor: '#198754'
+        });
+        </text>
+    }
+
+    // Hỏi trước khi xóa
+    function confirmDelete(id, name) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Bạn có chắc muốn xóa khách hàng [" + name + "] không?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Admin/KhachHang/Delete/' + id;
+            }
+        });
+    }
+</script>

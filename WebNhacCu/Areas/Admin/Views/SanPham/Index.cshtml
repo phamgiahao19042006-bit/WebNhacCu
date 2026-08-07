@@ -1,77 +1,125 @@
-﻿@model IEnumerable<CoreDatabase.Models.SanPham> // ⚠️ Thay namespace
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<CoreDatabase.Models.SanPham>
 
 @{
     ViewData["Title"] = "Quản lý Sản Phẩm";
     Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
 }
 
+<!-- Nhúng thư viện SweetAlert2 để làm bảng popup xác nhận -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <div class="container-fluid p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold text-uppercase m-0">Danh Sách Sản Phẩm</h4>
-        <a href="/Admin/SanPham/Create" class="btn btn-primary">
-            <i class="fa-solid fa-plus me-1"></i> Thêm sản phẩm mới
-        </a>
+        <h3 class="fw-bold">DANH SÁCH SẢN PHẨM</h3>
+        <a href="/Admin/SanPham/Create" class="btn btn-primary fw-bold">+ Thêm sản phẩm mới</a>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Hình ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Mã Loại</th>
+                <th>Mã Thương hiệu</th>
+                <th>Giá bán</th>
+                <th>Số lượng tồn</th>
+                <th class="text-center">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
                     <tr>
-                        <th class="ps-3">Hình ảnh</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Loại</th>
-                        <th>Thương hiệu</th>
-                        <th>Giá bán</th>
-                        <th>Số lượng tồn</th>
-                        <th class="text-end pe-3">Thao tác</th>
+                        <!-- 1. Hình ảnh -->
+                        <td class="text-center">
+                            @if (!string.IsNullOrEmpty(item.HinhAnh))
+                            {
+                                <img src="~/images/sanpham/@item.HinhAnh" style="width: 50px; height: 50px; object-fit: cover;" class="rounded" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa có ảnh</span>
+                            }
+                        </td>
+
+                        <!-- 2. Tên sản phẩm -->
+                        <td class="fw-bold">@item.TenSP</td>
+
+                        <!-- 3. Mã Loại -->
+                        <td>
+                            <span class="badge bg-secondary">@item.MaLoai</span>
+                        </td>
+
+                        <!-- 4. Mã Thương hiệu -->
+                        <td>@item.MaTH</td>
+
+                        <!-- 5. Giá bán -->
+                        <td class="text-danger fw-bold">@string.Format("{0:N0} đ", item.DonGia)</td>
+
+                        <!-- 6. Số lượng tồn -->
+                        <td class="text-center">
+                            <span class="badge bg-warning text-dark">@item.SoLuongTon</span>
+                        </td>
+
+                        <!-- 7. THAO TÁC: NÚT SỬA VÀ NÚT XÓA -->
+                        <td class="text-center">
+                            <!-- NÚT SỬA: Chuyển hướng sang trang Edit -->
+                            <a href="/Admin/SanPham/Edit/@item.MaSP" class="btn btn-sm btn-outline-warning me-1" title="Sửa sản phẩm">
+                                ✏️
+                            </a>
+
+                            <!-- NÚT XÓA: Gọi hàm Javascript bật Popup xác nhận -->
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete('@item.MaSP', '@item.TenSP')" title="Xóa sản phẩm">
+                                🗑️
+                            </button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td class="ps-3">
-                                <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/no-image.png" : item.HinhAnh)"
-                                     alt="@item.TenSP" class="rounded border" style="width: 50px; height: 50px; object-fit: cover;" />
-                            </td>
-                            <td class="fw-semibold">@item.TenSP</td>
-                            <td><span class="badge bg-secondary">@(item.LoaiSP?.TenLoai ?? "Chưa phân loại")</span></td>
-                            <td>@(item.ThuongHieu?.TenTH ?? "-")</td>
-                            <td class="text-danger fw-bold">@item.DonGia.ToString("N0") đ</td>
-                            <td>
-                                <span class="badge @(item.SoLuongTon > 5 ? "bg-success" : "bg-warning text-dark")">
-                                    @item.SoLuongTon
-                                </span>
-                            </td>
-                            <td class="text-end pe-3">
-                                <a href="/Admin/SanPham/Edit/@item.MaSP" class="btn btn-sm btn-outline-warning me-1">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteSanPham(@item.MaSP)">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+                }
+            }
+        </tbody>
+    </table>
 </div>
 
+<!-- JAVASCRIPT XỬ LÝ POPUP XÁC NHẬN XÓA -->
 <script>
-    function deleteSanPham(id) {
-        if (confirm("Hào có chắc chắn muốn xóa sản phẩm này không?")) {
-            fetch('/Admin/SanPham/Delete/' + id, { method: 'POST' })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert("Xóa thất bại!");
-                    }
-                });
-        }
+    function confirmDelete(id, name) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: `Bạn có chắc chắn muốn xóa sản phẩm "${name}" (Mã: ${id}) không?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Gửi request xóa đến Controller
+                fetch(`/Admin/SanPham/Delete/${id}`, {
+                    method: 'POST'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Đã xóa!',
+                                text: 'Sản phẩm đã được xóa thành công khỏi CSDL.',
+                                icon: 'success',
+                                confirmButtonColor: '#198754'
+                            }).then(() => {
+                                location.reload(); // Load lại trang sau khi xóa
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', data.message || 'Không thể xóa sản phẩm này.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire('Lỗi!', 'Có lỗi xảy ra trong quá trình xóa.', 'error');
+                    });
+            }
+        });
     }
 </script>

@@ -1,0 +1,81 @@
+﻿@model CoreDatabase.Models.NhaCC
+@{
+    ViewData["Title"] = "Chỉnh Sửa Nhà Cung Cấp";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-pen-to-square fs-3 text-warning"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">CẬP NHẬT NHÀ CUNG CẤP</h3>
+        </div>
+        <a href="/Admin/NhaCC/Index" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8 col-lg-6 mx-auto">
+            <div class="card border-0 shadow-sm p-4">
+                <form action="/Admin/NhaCC/Edit" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <!-- THÊM DÒNG NÀY: Giữ ngầm MaNCC để gửi về Controller khi Submit -->
+                    <input type="hidden" name="MaNCC" value="@Model?.MaNCC" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mã Nhà Cung Cấp</label>
+                        <!-- Ô này chỉ để hiển thị cho người dùng xem, không dùng submit -->
+                        <input type="text" class="form-control bg-light" value="@Model?.MaNCC" disabled />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên Nhà Cung Cấp <span class="text-danger">*</span></label>
+                        <input type="text" name="TenNCC" value="@Model?.TenNCC" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Số Điện Thoại</label>
+                        <input type="text" name="SDT" value="@Model?.SDT" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="Email" value="@Model?.Email" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Địa Chỉ</label>
+                        <textarea name="DiaChi" class="form-control" rows="3">@Model?.DiaChi</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Trạng Thái</label>
+                        <select name="TT" class="form-select">
+                            <option value="true" selected="@(Model?.TT == true)">Hoạt động</option>
+                            <option value="false" selected="@(Model?.TT == false)">Ngừng hoạt động</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="/Admin/NhaCC/Index" class="btn btn-secondary px-3">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-warning text-white px-4 fw-semibold">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Cập nhật
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

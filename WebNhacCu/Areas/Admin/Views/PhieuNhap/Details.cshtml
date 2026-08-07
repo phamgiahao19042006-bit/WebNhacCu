@@ -1,0 +1,82 @@
+﻿@model CoreDatabase.Models.PhieuNhap
+@{
+    ViewData["Title"] = "Chi Tiết Phiếu Nhập";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+    var chiTietList = ViewBag.ChiTietList as List<CoreDatabase.Models.CTPhieuNhap>;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-file-invoice fs-3 text-primary"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">CHI TIẾT PHIẾU NHẬP: @Model?.MaPN</h3>
+        </div>
+        <a href="/Admin/PhieuNhap/Index" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <!-- Thông tin phiếu nhập -->
+    <div class="card border-0 shadow-sm p-3 mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <span class="text-muted d-block small">Mã Phiếu Nhập:</span>
+                <span class="fw-bold text-dark fs-6">@Model?.MaPN</span>
+            </div>
+            <div class="col-md-3">
+                <span class="text-muted d-block small">Nhà Cung Cấp:</span>
+                <span class="fw-semibold text-primary">@ViewBag.TenNCC (@Model?.MaNCC)</span>
+            </div>
+            <div class="col-md-3">
+                <span class="text-muted d-block small">Ngày Nhập:</span>
+                <span class="fw-semibold">@Model?.NgayNhap.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+            <div class="col-md-3">
+                <span class="text-muted d-block small">Tổng Tiền:</span>
+                <span class="fw-bold text-success fs-6">@Model?.TongTien.ToString("N0") VNĐ</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng sản phẩm trong phiếu nhập -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h6 class="m-0 fw-bold text-dark"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Danh sách mặt hàng nhập</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center">
+                    <thead class="bg-light border-bottom fw-bold text-dark">
+                        <tr>
+                            <th class="py-2">STT</th>
+                            <th class="py-2">Mã Sản Phẩm</th>
+                            <th class="py-2">Số Lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (chiTietList != null && chiTietList.Any())
+                        {
+                            int stt = 1;
+                            foreach (var ct in chiTietList)
+                            {
+                                <tr>
+                                    <td>@(stt++)</td>
+                                    <td class="fw-bold text-primary">@ct.MaSP</td>
+                                    <td><span class="badge bg-secondary px-3 py-2">@ct.SoLuong</span></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-4">Chưa có chi tiết sản phẩm cho phiếu nhập này.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

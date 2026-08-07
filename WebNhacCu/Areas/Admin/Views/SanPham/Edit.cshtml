@@ -1,66 +1,71 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model CoreDatabase.Models.ThuongHieu
+﻿@model CoreDatabase.Models.ThuongHieu
 
 @{
-    ViewData["Title"] = "Cập Nhật Thương Hiệu";
+    ViewData["Title"] = "Sửa Thương Hiệu";
     Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
 }
 
+<!-- Nhúng thư viện thông báo SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container-fluid p-4">
-    <div class="card border-0 shadow-sm" style="max-width: 600px; margin: 0 auto;">
-        <div class="card-header bg-warning text-dark fw-bold">
-            CẬP NHẬT THƯƠNG HIỆU
-        </div>
-        <div class="card-body">
-            <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-uppercase m-0">[SỬA THƯƠNG HIỆU: @Model.MaTH]</h2>
+        <a href="/Admin/ThuongHieu" class="btn btn-outline-secondary px-4">Quay lại</a>
+    </div>
 
-            <form action="/Admin/ThuongHieu/Edit/@Model.MaTH" method="post">
-                <!-- Khóa chính MaTH khóa không cho sửa -->
-                <input type="hidden" name="MaTH" value="@Model.MaTH" />
-                <input type="hidden" name="CreatedDate" value="@Model.CreatedDate" />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 p-4" style="border-radius: 8px;">
+                <!-- Để action trống ("") để nó submit chính xác vào URL hiện tại mà không bị lỗi 404 -->
+                <form action="" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <input type="hidden" asp-for="MaTH" />
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Mã thương hiệu</label>
-                    <input type="text" class="form-control" value="@Model.MaTH" disabled readonly />
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mã thương hiệu</label>
+                        <input type="text" class="form-control bg-light" value="@Model.MaTH" disabled />
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Tên thương hiệu</label>
-                    <input type="text" name="TenTH" class="form-control" value="@Model.TenTH" required />
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên thương hiệu <span class="text-danger">*</span></label>
+                        <input asp-for="TenTH" class="form-control" required />
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Quốc gia</label>
-                    <textarea name="QuocGia" class="form-control" rows="3">@Model.QuocGia</textarea>
-                </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Quốc gia</label>
+                        <input asp-for="QuocGia" class="form-control" placeholder="Nhập quốc gia..." />
+                    </div>
 
-                <div class="text-end mt-4">
-                    <a href="/Admin/ThuongHieu" class="btn btn-secondary me-2">Hủy</a>
-                    <button type="submit" class="btn btn-primary">Lưu Cập Nhật</button>
-                </div>
-            </form>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn text-white fw-bold px-4" style="background-color: #c9a227;">Cập nhật</button>
+                        <a href="/Admin/ThuongHieu" class="btn btn-outline-secondary px-4">Hủy</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
-@if (ViewBag.IsSuccess == true)
-{
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            Swal.fire({
-                title: 'Cập nhật thành công!',
-                text: 'Thông tin thương hiệu đã được cập nhật.',
-                icon: 'success',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#0d6efd',
-                allowOutsideClick: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/Admin/ThuongHieu';
-                }
-            });
+<!-- SCRIPT BẬT BẢNG THÔNG BÁO VÀ CHUYỂN TRANG -->
+<script>
+    @if (ViewBag.IsSuccess == true)
+    {
+        <text>
+        Swal.fire({
+            title: 'Thành công!',
+            text: '@Html.Raw(ViewBag.Message)',
+            icon: 'success',
+            confirmButtonText: 'OK / Xác nhận',
+            confirmButtonColor: '#198754',
+            allowOutsideClick: false
+        }).then((result) => {
+            // Khi nhấn OK / Xác nhận thì mới chuyển hướng về trang danh sách Thương hiệu
+            if (result.isConfirmed) {
+                window.location.href = '/Admin/ThuongHieu';
+            }
         });
-    </script>
-}
+        </text>
+    }
+</script>

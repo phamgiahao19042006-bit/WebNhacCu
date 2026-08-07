@@ -1,0 +1,149 @@
+﻿@model IEnumerable<CoreDatabase.Models.NhaCC>
+@{
+    ViewData["Title"] = "Nhà Cung Cấp";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-truck-field fs-3 text-primary"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">NHÀ CUNG CẤP</h3>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm p-3 mb-3">
+        <div class="d-flex gap-2 mb-3">
+            <a href="/Admin/NhaCC/Create" class="btn btn-primary btn-sm px-3 fw-semibold">
+                <i class="fa-solid fa-plus me-1"></i> Thêm nhà cung cấp
+            </a>
+        </div>
+
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="Nhập mã NCC, tên NCC, SĐT, email..." />
+            </div>
+            <div class="col-md-3">
+                <select name="trangThai" class="form-select form-select-sm">
+                    <option value="">Trạng thái: Tất cả</option>
+                    <option value="true">Hoạt động</option>
+                    <option value="false">Ngừng hoạt động</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center" style="font-size: 13px;">
+                    <thead class="bg-light border-bottom fw-bold text-dark">
+                        <tr>
+                            <th class="py-2">Mã NCC</th>
+                            <th class="py-2 text-start">Tên nhà cung cấp</th>
+                            <th class="py-2">SĐT</th>
+                            <th class="py-2">Email</th>
+                            <th class="py-2 text-start">Địa chỉ</th>
+                            <th class="py-2">Trạng thái</th>
+                            <th class="py-2">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@item.MaNCC</td>
+                                    <td class="text-start fw-semibold">@item.TenNCC</td>
+                                    <td>@item.SDT</td>
+                                    <td>@item.Email</td>
+                                    <td class="text-start">@item.DiaChi</td>
+                                    <td>
+                                        @if (item.TT == true)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">Hoạt động</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill">Ngừng hoạt động</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <!-- Nút Sửa -->
+                                        <a href="/Admin/NhaCC/Edit/@item.MaNCC" class="btn btn-sm btn-light text-warning" title="Sửa">
+                                            <i class="fa-regular fa-pen-to-square fs-6"></i>
+                                        </a>
+                                        <!-- Nút Xóa -->
+                                        <button type="button" onclick="confirmDelete('@item.MaNCC')" class="btn btn-sm btn-light text-danger" title="Xóa">
+                                            <i class="fa-regular fa-trash-can fs-6"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">Chưa có dữ liệu nhà cung cấp!</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS Bắt sự kiện Xóa bằng SweetAlert2 -->
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Bạn có chắc chắn muốn xóa nhà cung cấp " + id + " này không?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Admin/NhaCC/Delete/' + id, {
+                    method: 'POST'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Đã xóa!', data.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    });
+            }
+        });
+    }
+</script>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        Swal.fire({
+            title: 'Thành công!',
+            text: '@TempData["SuccessMessage"]',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#0d6efd'
+        });
+    </script>
+}

@@ -1,0 +1,169 @@
+﻿@model IEnumerable<CoreDatabase.Models.CTPhieuNhap>
+@{
+    ViewData["Title"] = "Chi Tiết Nhập Hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+    var dsPN = ViewBag.DsPhieuNhap as List<CoreDatabase.Models.PhieuNhap>;
+    string selectedMaPN = ViewBag.MaPN as string;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-boxes-stacked fs-3 text-primary"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">CHI TIẾT NHẬP HÀNG @(!string.IsNullOrEmpty(selectedMaPN) ? $" - PHIẾU {selectedMaPN}" : "")</h3>
+        </div>
+        <a href="/Admin/PhieuNhap/Index" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Trở về Phiếu Nhập
+        </a>
+    </div>
+
+    <!-- Thanh Lọc & Thêm Mới -->
+    <div class="card border-0 shadow-sm p-3 mb-3">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <form method="get" action="/Admin/ChiTietPhieuNhap/Index" class="d-flex gap-2">
+                    <select name="maPN" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- Tất cả phiếu nhập --</option>
+                        @if (dsPN != null)
+                        {
+                            foreach (var pn in dsPN)
+                            {
+                                <option value="@pn.MaPN" selected="@(pn.MaPN == selectedMaPN)">@pn.MaPN - Ngày: @pn.NgayNhap.ToString("dd/MM/yyyy")</option>
+                            }
+                        }
+                    </select>
+                </form>
+            </div>
+            <div class="col-md-7 text-end">
+                <button type="button" class="btn btn-primary btn-sm px-3 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalThemCT">
+                    <i class="fa-solid fa-plus me-1"></i> Thêm sản phẩm vào phiếu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng Danh Sách Chi Tiết -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center" style="font-size: 13px;">
+                    <thead class="bg-light border-bottom fw-bold text-dark">
+                        <tr>
+                            <th class="py-2">Mã PN</th>
+                            <th class="py-2">Mã SP</th>
+                            <th class="py-2">Số lượng</th>
+                            <th class="py-2 text-end">Đơn giá</th>
+                            <th class="py-2 text-end">Thành tiền</th>
+                            <th class="py-2">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                decimal thanhTien = item.SoLuong * item.DonGiaNhap;
+                                <tr>
+                                    <td class="fw-bold">@item.MaPN</td>
+                                    <td class="fw-semibold text-primary">@item.MaSP</td>
+                                    <td>@item.SoLuong</td>
+                                    <td class="text-end">@item.DonGiaNhap.ToString("N0") VNĐ</td>
+                                    <td class="text-end fw-bold text-success">@thanhTien.ToString("N0") VNĐ</td>
+                                    <td>
+                                        <button type="button" onclick="confirmDelete('@item.MaPN', '@item.MaSP')" class="btn btn-sm btn-light text-danger" title="Xóa">
+                                            <i class="fa-regular fa-trash-can fs-6"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">Chưa có chi tiết nhập hàng nào!</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm Chi Tiết -->
+<div class="modal fade" id="modalThemCT" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/Admin/ChiTietPhieuNhap/Create" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-primary">Thêm Chi Tiết Nhập Hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-content p-3 border-0">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mã Phiếu Nhập</label>
+                        <input type="text" name="MaPN" class="form-control" value="@selectedMaPN" required placeholder="Nhập mã phiếu (VD: PN01)" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mã Sản Phẩm</label>
+                        <input type="text" name="MaSP" class="form-control" required placeholder="Nhập mã sản phẩm (VD: SP01)" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Số Lượng</label>
+                        <input type="number" name="SoLuong" class="form-control" value="1" min="1" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Đơn Giá Nhập (VNĐ)</label>
+                        <input type="number" name="Dongia" class="form-control" value="0" min="0" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary fw-semibold">Lưu chi tiết</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDelete(maPN, maSP) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Xóa sản phẩm " + maSP + " khỏi phiếu nhập " + maPN + "?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Admin/ChiTietPhieuNhap/Delete?maPN=' + maPN + '&maSP=' + maSP, {
+                    method: 'POST'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Đã xóa!', data.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    });
+            }
+        });
+    }
+</script>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        Swal.fire('Thành công!', '@TempData["SuccessMessage"]', 'success');
+    </script>
+}

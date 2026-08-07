@@ -1,0 +1,89 @@
+﻿@model CoreDatabase.Models.PhieuNhap
+@{
+    ViewData["Title"] = "Chỉnh Sửa Phiếu Nhập";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+    var dsNCC = ViewBag.DsNhaCungCap as List<CoreDatabase.Models.NhaCC>;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-pen-to-square fs-3 text-warning"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">CẬP NHẬT PHIẾU NHẬP</h3>
+        </div>
+        <a href="/Admin/PhieuNhap/Index" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8 col-lg-6 mx-auto">
+            <div class="card border-0 shadow-sm p-4">
+                <form action="/Admin/PhieuNhap/Edit" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Giữ ngầm MaPN để gửi lên server -->
+                    <input type="hidden" name="MaPN" value="@Model?.MaPN" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mã Phiếu Nhập</label>
+                        <input type="text" class="form-control bg-light" value="@Model?.MaPN" disabled />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nhà Cung Cấp <span class="text-danger">*</span></label>
+                        <select name="MaNCC" class="form-select" required>
+                            <option value="">-- Chọn nhà cung cấp --</option>
+                            @if (dsNCC != null && dsNCC.Any())
+                            {
+                                foreach (var ncc in dsNCC)
+                                {
+                                    // Kiểm tra nếu ncc.MaNCC khớp với MaNCC của phiếu nhập đang sửa thì chọn (selected)
+                                    bool isSelected = Model != null && Model.MaNCC == ncc.MaNCC;
+                                    <option value="@ncc.MaNCC" selected="@isSelected">
+                                        @ncc.MaNCC - @ncc.TenNCC
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Ngày Nhập</label>
+                        <input type="datetime-local" name="NgayNhap" class="form-control" value="@(Model != null ? Model.NgayNhap.ToString("yyyy-MM-ddTHH:mm") : "")" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tổng Tiền (VNĐ)</label>
+                        <input type="number" name="TongTien" value="@Model?.TongTien" class="form-control" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Trạng Thái</label>
+                        <select name="TT" class="form-select">
+                            <option value="true" selected="@(Model?.TT == true)">Đã nhập</option>
+                            <option value="false" selected="@(Model?.TT == false)">Chờ xử lý</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="/Admin/PhieuNhap/Index" class="btn btn-secondary px-3">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-warning text-white px-4 fw-semibold">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Cập nhật
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
