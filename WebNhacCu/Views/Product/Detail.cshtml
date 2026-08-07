@@ -1,0 +1,56 @@
+﻿@model WebNhacCu.Models.ViewModels.ProductDetailViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<h2>@Model.Product.TenSP</h2>
+
+@if (!string.IsNullOrEmpty(Model.Product.HinhAnh))
+{
+    <img src="@Model.Product.HinhAnh"
+         width="300" />
+}
+
+<hr />
+
+<p><strong>Loại:</strong> @Model.Product.TenLoai</p>
+
+<p><strong>Thương hiệu:</strong> @Model.Product.TenTH</p>
+
+<p><strong>Giá:</strong> @Model.Product.DonGia.ToString("N0") VNĐ</p>
+
+<p><strong>Tồn kho:</strong> @Model.Product.SoLuongTon</p>
+
+<p><strong>Mô tả:</strong></p>
+
+<p>@Model.Product.MoTa</p>
+
+<hr />
+
+<h3>Sản phẩm liên quan</h3>
+
+@if (Model.RelatedProducts.Any())
+{
+    <ul>
+
+        @foreach (var item in Model.RelatedProducts)
+        {
+            <li>
+
+                <a asp-action="Detail"
+                   asp-route-id="@item.MaSP">
+
+                    @item.TenSP
+
+                </a>
+
+            </li>
+        }
+
+    </ul>
+}
+else
+{
+    <p>Không có sản phẩm liên quan.</p>
+}

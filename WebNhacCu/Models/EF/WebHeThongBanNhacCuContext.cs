@@ -32,6 +32,5 @@ namespace WebNhacCu.Models.EF
         // --- 6. Phân hệ Khuyến mãi ---
         public DbSet<KhuyenMai> KhuyenMais { get; set; } = null!;
         public DbSet<CTKhuyenMai> CTKhuyenMais { get; set; } = null!;
-        public object LoaiSanPhams { get; internal set; }
     }
 }

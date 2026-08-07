@@ -1,5 +1,47 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model WebNhacCu.Models.DTO.ProductDTO
+
+<div class="product-card">
+
+    <div class="product-image">
+
+        @if (!string.IsNullOrEmpty(Model.HinhAnh))
+        {
+            <img src="~/images/products/@Model.HinhAnh"
+                 alt="@Model.TenSP" />
+        }
+        else
+        {
+            <img src="~/images/products/no-image.png"
+                 alt="No Image" />
+        }
+
+    </div>
+
+    <div class="product-content">
+
+        <h4>@Model.TenSP</h4>
+
+        <p class="category">
+            @Model.TenLoai
+        </p>
+
+        <p class="brand">
+            @Model.TenTH
+        </p>
+
+        <h3 class="price">
+            @Model.DonGia.ToString("N0") VNĐ
+        </h3>
+
+        <a asp-controller="Product"
+           asp-action="Detail"
+           asp-route-id="@Model.MaSP"
+           class="btn-detail">
+
+            Xem chi tiết
+
+        </a>
+
+    </div>
+
+</div>

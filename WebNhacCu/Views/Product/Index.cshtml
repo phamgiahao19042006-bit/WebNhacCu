@@ -1,0 +1,102 @@
+﻿@model WebNhacCu.Models.ViewModels.ProductViewModel
+
+@{
+    ViewData["Title"] = "Sản phẩm";
+}
+
+<h2>Danh sách sản phẩm</h2>
+
+@if (!Model.Products.Any())
+{
+    <p>Không có sản phẩm.</p>
+}
+else
+{
+    <form asp-action="Index" method="get" class="mb-3">
+
+        <input type="text"
+               name="keyword"
+               value="@ViewBag.Keyword"
+               placeholder="Nhập tên sản phẩm..." />
+
+        <button type="submit">
+            Tìm kiếm
+        </button>
+
+    </form>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Ảnh</th>
+                <th>Tên</th>
+                <th>Loại</th>
+                <th>Thương hiệu</th>
+                <th>Giá</th>
+                <th>Tồn kho</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model.Products)
+            {
+                <tr>
+
+                    <td width="120">
+                        @if (!string.IsNullOrEmpty(item.HinhAnh))
+                        {
+                            <img src="@item.HinhAnh"
+                                 style="width:100px" />
+                        }
+                    </td>
+
+                    <td>@item.TenSP</td>
+
+                    <td>@item.TenLoai</td>
+
+                    <td>@item.TenTH</td>
+
+                    <td>@item.DonGia.ToString("N0") VNĐ</td>
+
+                    <td>@item.SoLuongTon</td>
+
+                    <td>
+                        <a asp-action="Detail"
+                           asp-route-id="@item.MaSP"
+                           class="btn btn-primary">
+                            Chi tiết
+                        </a>
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+    @if (Model.TotalPages > 1)
+    {
+        <div class="mt-3">
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                if (i == Model.Query.Page)
+                {
+                    <strong>@i</strong>
+                }
+                else
+                {
+                    <a asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-keyword="@ViewBag.Keyword">
+                        @i
+                    </a>
+                }
+
+                @: |
+            }
+
+        </div>
+    }
+}

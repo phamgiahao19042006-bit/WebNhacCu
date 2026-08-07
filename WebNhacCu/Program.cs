@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics; // FIX LỖI RelationalEventId
-using WebNhacCu.Models;
-using WebNhacCu.Models.EF; // Đổi thành Namespace DbContext của Hào nếu khác
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using WebNhacCu.Data;
+using WebNhacCu.Interfaces;
+using WebNhacCu.Models.EF;
+using WebNhacCu.Services;
+using WebNhacCu.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,14 +13,26 @@ builder.Services.AddControllersWithViews();
 
 // Cấu hình DbContext (Bỏ qua cảnh báo Pending Model Changes Warning nếu có)
 builder.Services.AddDbContext<WebHeThongBanNhacCuContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WebHeThongBanNhacCudb"));
-    options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
-});
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("WebHeThongBanNhacCudb"))
+    .ConfigureWarnings(w =>
+        w.Ignore(RelationalEventId.PendingModelChangesWarning))
+);
+
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
 
 var app = builder.Build();
 
-// 2. Cấu hình Middleware Pipeline
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<WebHeThongBanNhacCuContext>();
+    DataSeeder.Seed(context);
+}
+
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
