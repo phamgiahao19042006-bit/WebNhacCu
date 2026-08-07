@@ -98,7 +98,7 @@ namespace WebNhacCu.Areas.Admin.Controllers
         }
 
         // 3. CHỈNH SỬA SẢN PHẨM - GET
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null) return NotFound();
 
@@ -155,17 +155,33 @@ namespace WebNhacCu.Areas.Admin.Controllers
         }
 
         // 4. XÓA SẢN PHẨM
+        
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
-            var sanPham = await _context.SanPhams.FindAsync(id);
-            if (sanPham != null)
+            if (string.IsNullOrEmpty(id))
             {
+                return Json(new { success = false, message = "Mã sản phẩm không hợp lệ!" });
+            }
+
+            try
+            {
+                var sanPham = await _context.SanPhams.FindAsync(id);
+                if (sanPham == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy sản phẩm trong CSDL!" });
+                }
+
+                // Xóa sản phẩm khỏi DB
                 _context.SanPhams.Remove(sanPham);
                 await _context.SaveChangesAsync();
+
                 return Json(new { success = true });
             }
-            return Json(new { success = false });
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi khi xóa: " + ex.Message });
+            }
         }
     }
 }

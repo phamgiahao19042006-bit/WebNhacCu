@@ -1,0 +1,199 @@
+﻿@model CoreDatabase.Models.HoaDon
+@{
+    ViewData["Title"] = "Chi Tiết Hóa Đơn";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+    
+    // Lấy danh sách từ Controller truyền sang
+    var chiTiets = ViewBag.ChiTietHoaDon as IEnumerable<dynamic>;
+    
+    // Khai báo các biến tính tổng động
+    int tongSoLuong = 0;
+    decimal tongTienHangCalculated = 0;
+
+    if (chiTiets != null && chiTiets.Any())
+    {
+        foreach (var item in chiTiets)
+        {
+            tongSoLuong += (int)item.SoLuong;
+            tongTienHangCalculated += (decimal)item.ThanhTien;
+        }
+    }
+
+    // Lấy giảm giá từ Model
+    decimal giamGia = Model?.GiamGia ?? 0m;
+    // Thành tiền cuối cùng = Tổng tiền hàng - Giảm giá
+    decimal thanhTienCuoi = tongTienHangCalculated - giamGia;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-file-invoice fs-3 text-primary"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">CHI TIẾT HÓA ĐƠN</h3>
+        </div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0 text-secondary" style="font-size: 13px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></li>
+                <li class="breadcrumb-item">Nghiệp vụ</li>
+                <li class="breadcrumb-item">Bán hàng</li>
+                <li class="breadcrumb-item active text-dark fw-semibold">Chi tiết hóa đơn</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- THANH NÚT THAO TÁC -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-3">
+            <a href="/Admin/HoaDon/Index" class="btn btn-outline-secondary btn-sm fw-medium px-3 py-2 shadow-sm rounded-2">
+                <i class="fa-solid fa-arrow-left me-1"></i> Quay lại danh sách hóa đơn
+            </a>
+            <div class="fs-5 fw-bold text-secondary">
+                HÓA ĐƠN: <span class="text-primary">@Model?.MaHD</span>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" onclick="window.print()" class="btn btn-outline-secondary btn-sm fw-medium px-3 py-2 shadow-sm rounded-2">
+                <i class="fa-solid fa-print"></i> In hóa đơn
+            </button>
+            <button type="button" class="btn btn-outline-success btn-sm fw-medium px-3 py-2 shadow-sm rounded-2">
+                <i class="fa-solid fa-file-excel"></i> Xuất Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- NỘI DUNG 2 CỘT -->
+    <div class="row g-3">
+
+        <!-- CỘT TRÁI: THÔNG TIN HÓA ĐƠN -->
+        <div class="col-lg-4 col-md-5">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 8px;">
+                <div class="card-body p-4" style="font-size: 14px;">
+                    <h6 class="fw-bold text-primary mb-3 text-uppercase">THÔNG TIN HÓA ĐƠN</h6>
+                    
+                    <table class="table table-borderless text-dark mb-0">
+                        <tbody>
+                            <tr>
+                                <td class="text-secondary ps-0 py-1" style="width: 40%;">Mã hóa đơn</td>
+                                <td class="py-1">: <strong class="text-dark">@Model?.MaHD</strong></td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary ps-0 py-1">Ngày lập</td>
+                                <td class="py-1">: @Model?.NgayLap.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary ps-0 py-1">Khách hàng</td>
+                                <td class="py-1">: @Model?.MaKH</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary ps-0 py-1">SĐT</td>
+                                <td class="py-1">: 0987 654 321</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary ps-0 py-1">Nhân viên</td>
+                                <td class="py-1">: @Model?.MaNV</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary ps-0 py-1">Phương thức TT</td>
+                                <td class="py-1">: @Model?.PhuongThucTT</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary ps-0 py-1">Trạng thái</td>
+                                <td class="py-1">: 
+                                    @if (Model?.TT == true)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill fw-medium">Hoàn thành</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill fw-medium">Đã hủy</span>
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <hr class="my-3 text-secondary opacity-25" />
+
+                    <!-- TỔNG TIỀN TỰ ĐỘNG KHỦNG TỪ SẢN PHẨM SANG -->
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary">Tổng tiền hàng :</span>
+                        <strong class="text-dark">@string.Format("{0:N0}", tongTienHangCalculated)</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Giảm giá :</span>
+                        <span class="text-dark">@string.Format("{0:N0}", giamGia)</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="fw-bold fs-6 text-dark">Thành tiền :</span>
+                        <span class="fw-bold fs-5 text-danger">@string.Format("{0:N0}", thanhTienCuoi)</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: DANH SÁCH SẢN PHẨM (LẤY TỪ DATABASE) -->
+        <div class="col-lg-8 col-md-7">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 8px;">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-primary mb-3 text-uppercase">DANH SÁCH SẢN PHẨM</h6>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center" style="font-size: 14px;">
+                            <thead class="bg-light border-bottom">
+                                <tr class="text-secondary fw-bold">
+                                    <th class="py-2" style="width: 50px;">STT</th>
+                                    <th class="py-2">Mã SP</th>
+                                    <th class="py-2 text-start">Tên sản phẩm</th>
+                                    <th class="py-2 text-end">Đơn giá</th>
+                                    <th class="py-2">Số lượng</th>
+                                    <th class="py-2">Đơn vị tính</th>
+                                    <th class="py-2 text-end">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (chiTiets != null && chiTiets.Any())
+                                {
+                                    int stt = 1;
+                                    foreach (var item in chiTiets)
+                                    {
+                                        <tr class="border-bottom">
+                                            <td class="text-secondary">@(stt++)</td>
+                                            <td class="text-secondary">@item.MaSP</td>
+                                            <td class="text-start fw-medium text-dark">@item.TenSP</td>
+                                            <td class="text-end text-dark">@string.Format("{0:N0}", item.DonGia)</td>
+                                            <td class="fw-medium">@item.SoLuong</td>
+                                            <td class="text-secondary">Cái</td>
+                                            <td class="text-end fw-bold text-primary">@string.Format("{0:N0}", item.ThanhTien)</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">Hóa đơn này chưa có sản phẩm nào!</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="bg-light fw-bold border-top">
+                                <tr>
+                                    <td colspan="4" class="py-3 text-uppercase text-dark">TỔNG CỘNG</td>
+                                    <td class="py-3 text-primary">@tongSoLuong</td>
+                                    <td></td>
+                                    <td class="py-3 text-end text-primary">@string.Format("{0:N0}", tongTienHangCalculated)</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

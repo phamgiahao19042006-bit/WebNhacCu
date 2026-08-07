@@ -65,7 +65,9 @@ namespace WebNhacCu.Areas.Admin.Controllers
             return View(thuongHieu);
         }
 
-        // 3. CHỈNH SỬA - GET
+        // 3. CHỈNH SỬA 
+
+        // GET: Admin/ThuongHieu/Edit/TH01
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -77,69 +79,55 @@ namespace WebNhacCu.Areas.Admin.Controllers
             return View(thuongHieu);
         }
 
-        // 3. CHỈNH SỬA - POST
+        // POST: Admin/ThuongHieu/Edit/TH01
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, ThuongHieu thuongHieu)
         {
             if (id != thuongHieu.MaTH) return NotFound();
-
-            // Loại bỏ kiểm tra không cần thiết
-            ModelState.Remove("SanPhams");
-            ModelState.Remove("CreatedBy");
-            ModelState.Remove("UpdatedBy");
-
-            if (string.IsNullOrWhiteSpace(thuongHieu.TenTH))
-            {
-                ModelState.AddModelError("TenTH", "Tên thương hiệu không được để trống!");
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    thuongHieu.UpdatedDate = DateTime.Now;
+                    var existingTH = await _context.ThuongHieus.FindAsync(id);
+                    if (existingTH != null)
+                    {
+                        existingTH.TenTH = thuongHieu.TenTH;
+                        existingTH.QuocGia = thuongHieu.QuocGia;
 
-                    // Cập nhật thông tin vào DB
-                    _context.Update(thuongHieu);
-                    await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
 
-                    // Đặt cờ báo thành công để View hiển thị SweetAlert2
-                    ViewBag.IsSuccess = true;
-                    return View(thuongHieu);
+                        // Đánh dấu để View Edit biết là đã lưu xong
+                        ViewBag.IsSuccess = true;
+                        ViewBag.Message = "Cập nhật thông tin thương hiệu thành công!";
+
+                        return View(thuongHieu);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Lỗi CSDL: " + (ex.InnerException?.Message ?? ex.Message));
+                    ModelState.AddModelError("", "Lỗi cập nhật: " + ex.Message);
                 }
             }
-
             return View(thuongHieu);
         }
 
         // 4. XÓA THƯƠNG HIỆU - POST
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id)) return NotFound();
+
+            var thuongHieu = await _context.ThuongHieus.FindAsync(id);
+            if (thuongHieu != null)
             {
-                return Json(new { success = false, message = "Mã thương hiệu không hợp lệ!" });
+                _context.ThuongHieus.Remove(thuongHieu);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Xóa thương hiệu thành công!";
             }
 
-            try
-            {
-                var thuongHieu = await _context.ThuongHieus.FindAsync(id);
-                if (thuongHieu != null)
-                {
-                    _context.ThuongHieus.Remove(thuongHieu);
-                    await _context.SaveChangesAsync();
-                    return Json(new { success = true, message = "Xóa thương hiệu thành công!" });
-                }
-                return Json(new { success = false, message = "Không tìm thấy thương hiệu để xóa!" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "Không thể xóa vì thương hiệu này đang có sản phẩm liên kết!" });
-            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

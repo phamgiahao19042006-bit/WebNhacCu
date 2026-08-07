@@ -1,0 +1,157 @@
+﻿@model IEnumerable<CoreDatabase.Models.PhieuNhap>
+@{
+    ViewData["Title"] = "Danh Sách Phiếu Nhập";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-boxes-packing fs-3 text-primary"></i>
+            <h3 class="fw-bold m-0 text-primary text-uppercase">PHIẾU NHẬP</h3>
+        </div>
+    </div>
+
+    <!-- Thanh Thao Tác & Lọc -->
+    <div class="card border-0 shadow-sm p-3 mb-3">
+        <div class="d-flex gap-2 mb-3">
+            <a href="/Admin/PhieuNhap/Create" class="btn btn-primary btn-sm px-3 fw-semibold">
+                <i class="fa-solid fa-plus me-1"></i> Thêm phiếu nhập
+            </a>
+        </div>
+
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="Nhập mã PN, mã nhà cung cấp..." />
+            </div>
+            <div class="col-md-3">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">Từ ngày:</span>
+                    <input type="date" name="fromDate" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">Đến ngày:</span>
+                    <input type="date" name="toDate" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bảng Phiếu Nhập -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center" style="font-size: 13px;">
+                    <thead class="bg-light border-bottom fw-bold text-dark">
+                        <tr>
+                            <th class="py-2">Mã PN</th>
+                            <th class="py-2">Ngày nhập</th>
+                            <th class="py-2 text-start">Mã NCC</th>
+                            <th class="py-2 text-end">Tổng tiền</th>
+                            <th class="py-2">Trạng thái</th>
+                            <th class="py-2">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@item.MaPN</td>
+                                    <td>@item.NgayNhap.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <!-- Chỉ hiển thị MaNCC -->
+                                    <td class="text-start fw-semibold">@item.MaNCC</td>
+                                    <td class="text-end fw-bold text-success">@item.TongTien.ToString("N0") VNĐ</td>
+                                    <td>
+                                        @if (item.TT == true)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">Đã nhập</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill">Chờ xử lý</span>
+                                        }
+                                    </td>
+                                    <td>
+                                         
+                                        <!-- Nút Xem Chi Tiết Phiếu Nhập -->
+                                        <a href="/Admin/PhieuNhap/Details/@item.MaPN" class="btn btn-sm btn-light text-info" title="Xem Chi Tiết"><i class="fa-regular fa-eye fs-6"></i> </a>
+                                        
+                                        <a href="/Admin/PhieuNhap/Edit/@item.MaPN" class="btn btn-sm btn-light text-warning" title="Sửa">
+                                            <i class="fa-regular fa-pen-to-square fs-6"></i>
+                                        </a>
+                                        
+                                        <button type="button" onclick="confirmDelete('@item.MaPN')" class="btn btn-sm btn-light text-danger" title="Xóa">
+                                            <i class="fa-regular fa-trash-can fs-6"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">Chưa có dữ liệu phiếu nhập!</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Bạn có chắc chắn muốn xóa phiếu nhập " + id + " này không?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Admin/PhieuNhap/Delete/' + id, {
+                    method: 'POST'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Đã xóa!', data.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    });
+            }
+        });
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+                    Swal.fire({
+                        title: 'Thanh cong!',
+                    text: '@TempData["SuccessMessage"]',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#0d6efd'
+                    });
+        </script>
+    }
+}

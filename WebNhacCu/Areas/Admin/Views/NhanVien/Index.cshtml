@@ -1,0 +1,183 @@
+﻿@model CoreDatabase.Models.NhanVien
+
+@{
+    ViewData["Title"] = "Quản Lý Nhân Viên";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+    var listNhanVien = ViewBag.NhanViens as List<CoreDatabase.Models.NhanVien>;
+    bool isEdit = listNhanVien != null && listNhanVien.Any(x => x.MaNV == Model.MaNV);
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4">
+    <h3 class="fw-bold mb-4 text-uppercase">👤 QUẢN LÝ NHÂN VIÊN</h3>
+
+    <!-- 1. KHUNG ĐIỀN THÔNG TIN (Ở TRÊN) -->
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 10px;">
+        <div class="card-header bg-dark text-white fw-bold">THÔNG TIN NHÂN VIÊN</div>
+        <div class="card-body">
+            <form action="/Admin/NhanVien/Save" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Mã Nhân Viên (MaNV) <span class="text-danger">*</span></label>
+                        <input type="text" name="MaNV" value="@Model.MaNV" class="form-control" required readonly />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Họ Và Tên (HoTen) <span class="text-danger">*</span></label>
+                        <input type="text" name="HoTen" value="@Model.HoTen" class="form-control" placeholder="Nhập họ tên..." required />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Ngày Sinh (NgaySinh)</label>
+                        <input type="date" name="NgaySinh" value="@(Model.NgaySinh.HasValue ? Model.NgaySinh.Value.ToString("yyyy-MM-dd") : DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd"))" class="form-control" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Giới Tính (GioiTinh)</label>
+                        <select name="GioiTinh" class="form-select">
+                            <option value="Nam" selected="@(Model.GioiTinh == "Nam")">Nam</option>
+                            <option value="Nữ" selected="@(Model.GioiTinh == "Nữ")">Nữ</option>
+                            <option value="Khác" selected="@(Model.GioiTinh == "Khác")">Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Số Điện Thoại (SDT)</label>
+                        <input type="text" name="SDT" value="@Model.SDT" class="form-control" placeholder="Nhập số điện thoại..." />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Email</label>
+                        <input type="email" name="Email" value="@Model.Email" class="form-control" placeholder="nhanvien@gmail.com" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Địa Chỉ (DiaChi)</label>
+                        <input type="text" name="DiaChi" value="@Model.DiaChi" class="form-control" placeholder="Nhập địa chỉ..." />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Trạng Thái (TT)</label>
+                        <select name="TT" class="form-select">
+                            <option value="true" selected="@(Model.TT == true)">Đang làm việc</option>
+                            <option value="false" selected="@(Model.TT == false)">Đã nghỉ việc</option>
+                        </select>
+                    </div>
+
+                    <!-- Nút thao tác (Đã loại bỏ nút Làm Mới) -->
+                    <div class="col-md-12 text-end mt-3">
+                        <button type="submit" class="btn btn-primary fw-bold px-4">
+                            💾 @(isEdit ? "CẬP NHẬT NHÂN VIÊN" : "THÊM NHÂN VIÊN")
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. KHUNG CHỨA THÔNG TIN / BẢNG DANH SÁCH (Ở DƯỚI) -->
+    <div class="card shadow-sm border-0" style="border-radius: 10px;">
+        <div class="card-header bg-secondary text-white fw-bold">DANH SÁCH NHÂN VIÊN</div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover align-middle m-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Họ Và Tên</th>
+                        <th>Ngày Sinh</th>
+                        <th>Giới Tính</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Email</th>
+                        <th>Địa Chỉ</th>
+                        <th class="text-center">Trạng Thái</th>
+                        <th class="text-center" style="width: 15%;">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (listNhanVien != null && listNhanVien.Any())
+                    {
+                        foreach (var item in listNhanVien)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.MaNV</td>
+                                <td class="text-primary fw-bold">@item.HoTen</td>
+                                <td>@(item.NgaySinh.HasValue ? item.NgaySinh.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td>@item.GioiTinh</td>
+                                <td>@item.SDT</td>
+                                <td>@item.Email</td>
+                                <td>@item.DiaChi</td>
+                                <td class="text-center">
+                                    @if (item.TT == true)
+                                    {
+                                        <span class="badge bg-success">Đang làm việc</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Đã nghỉ việc</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a href="/Admin/NhanVien/Index?editId=@item.MaNV" class="btn btn-sm btn-warning fw-bold">✏️ Sửa</a>
+                                    <button type="button" class="btn btn-sm btn-danger fw-bold" onclick="xoaNhanVien('@item.MaNV')">🗑️ Xóa</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted p-3">Chưa có dữ liệu nhân viên.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function xoaNhanVien(id) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Bạn có chắc chắn muốn xóa nhân viên " + id + " không?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Admin/NhanVien/Delete/' + id, {
+                    method: 'POST'
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Đã xóa!', data.message, 'success').then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire('Lỗi!', data.message, 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <text>
+        Swal.fire('Thành công!', '@TempData["SuccessMessage"]', 'success');
+        </text>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <text>
+        Swal.fire('Lỗi!', '@TempData["ErrorMessage"]', 'error');
+        </text>
+    }
+</script>
