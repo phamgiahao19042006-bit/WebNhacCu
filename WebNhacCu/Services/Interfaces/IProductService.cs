@@ -4,16 +4,10 @@ namespace WebNhacCu.Interfaces
 {
     public interface IProductService
     {
-        Task<List<ProductDTO>> GetAllAsync();
-
         Task<ProductDTO?> GetByIdAsync(string maSP);
-
-        Task<List<ProductDTO>> SearchAsync(string keyword);
-
-        Task<List<ProductDTO>> GetByCategoryAsync(string maLoai);
-
-        Task<List<ProductDTO>> GetByBrandAsync(string maTH);
-
-        Task<List<ProductDTO>> GetNewestAsync(int quantity);
+        Task<List<ProductDTO>> GetNewestAsync(int count);
+        Task<List<ProductDTO>> GetFeaturedAsync(int count);
+        Task<List<ProductDTO>> GetRelatedAsync(string maSP);
+        Task<(List<ProductDTO> Items, int TotalItems)> GetProductsAsync(ProductQueryDTO query);
     }
 }

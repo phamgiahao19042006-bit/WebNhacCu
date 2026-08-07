@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebNhacCu.Interfaces;
+using WebNhacCu.Models.DTO;
 using WebNhacCu.Models.ViewModels;
-using WebNhacCu.Services;
 
 namespace WebNhacCu.Controllers
 {
@@ -14,18 +14,27 @@ namespace WebNhacCu.Controllers
             _productService = productService;
         }
 
-        public async Task<IActionResult> Index()
+        // Danh sách sản phẩm
+        public async Task<IActionResult> Index(ProductQueryDTO query)
         {
+            var result = await _productService.GetProductsAsync(query);
+
             var viewModel = new ProductViewModel
             {
-                Products = await _productService.GetAllAsync()
+                Products = result.Items,
+                TotalItems = result.TotalItems,
+                Query = query
             };
 
             return View(viewModel);
         }
 
+        // Chi tiết sản phẩm
         public async Task<IActionResult> Detail(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest();
+
             var product = await _productService.GetByIdAsync(id);
 
             if (product == null)
@@ -34,10 +43,12 @@ namespace WebNhacCu.Controllers
             var viewModel = new ProductDetailViewModel
             {
                 Product = product,
-                RelatedProducts = await _productService.GetByCategoryAsync(product.MaLoai)
+                RelatedProducts = await _productService.GetRelatedAsync(id)
             };
 
             return View(viewModel);
         }
+
+
     }
 }

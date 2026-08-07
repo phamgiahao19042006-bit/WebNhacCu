@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using WebNhacCu.Interfaces;
 using WebNhacCu.Models.DTO;
 using WebNhacCu.Models.EF;
-using WebNhacCu.Services.Interfaces;
 
 namespace WebNhacCu.Services
 {
@@ -16,81 +15,7 @@ namespace WebNhacCu.Services
             _context = context;
         }
 
-        public async Task<List<ProductDTO>> GetAllAsync()
-        {
-            var products = await _context.SanPhams
-                .Include(p => p.LoaiSP)
-                .Include(p => p.ThuongHieu)
-                .Where(p => p.TT)
-                .OrderBy(p => p.TenSP)
-                .ToListAsync();
-
-            return products.Select(ToDTO).ToList();
-        }
-
-        public async Task<ProductDTO?> GetByIdAsync(string maSP)
-        {
-            var product = await _context.SanPhams
-                .Include(p => p.LoaiSP)
-                .Include(p => p.ThuongHieu)
-                .FirstOrDefaultAsync(p => p.MaSP == maSP && p.TT);
-
-            if (product == null)
-                return null;
-
-            return ToDTO(product);
-        }
-
-        public async Task<List<ProductDTO>> SearchAsync(string keyword)
-        {
-            keyword = keyword.Trim();
-
-            var products = await _context.SanPhams
-                .Include(p => p.LoaiSP)
-                .Include(p => p.ThuongHieu)
-                .Where(p => p.TT &&
-                            p.TenSP.Contains(keyword))
-                .ToListAsync();
-
-            return products.Select(ToDTO).ToList();
-        }
-
-        public async Task<List<ProductDTO>> GetByCategoryAsync(string maLoai)
-        {
-            var products = await _context.SanPhams
-                .Include(p => p.LoaiSP)
-                .Include(p => p.ThuongHieu)
-                .Where(p => p.MaLoai == maLoai && p.TT)
-                .ToListAsync();
-
-            return products.Select(ToDTO).ToList();
-        }
-
-        public async Task<List<ProductDTO>> GetByBrandAsync(string maTH)
-        {
-            var products = await _context.SanPhams
-                .Include(p => p.LoaiSP)
-                .Include(p => p.ThuongHieu)
-                .Where(p => p.MaTH == maTH && p.TT)
-                .ToListAsync();
-
-            return products.Select(ToDTO).ToList();
-        }
-
-        public async Task<List<ProductDTO>> GetNewestAsync(int quantity)
-        {
-            var products = await _context.SanPhams
-                .Include(p => p.LoaiSP)
-                .Include(p => p.ThuongHieu)
-                .Where(p => p.TT)
-                .OrderByDescending(p => p.CreatedDate)
-                .Take(quantity)
-                .ToListAsync();
-
-            return products.Select(ToDTO).ToList();
-        }
-
-        private static ProductDTO ToDTO(SanPham sp)
+        private static ProductDTO MapToDTO(SanPham sp)
         {
             return new ProductDTO
             {
@@ -108,6 +33,88 @@ namespace WebNhacCu.Services
                 MaTH = sp.MaTH,
                 TenTH = sp.ThuongHieu?.TenTH ?? string.Empty
             };
+        }
+
+
+
+        public async Task<(List<ProductDTO> Items, int TotalItems)> GetProductsAsync(ProductQueryDTO query)
+        {
+            query.Page = Math.Max(query.Page, 1);
+            query.PageSize = Math.Max(query.PageSize, 1);
+            var products = _context.SanPhams
+                .AsNoTracking()
+                .Include(x => x.LoaiSP)
+                .Include(x => x.ThuongHieu)
+                .Where(x => x.TT);
+
+            var totalItems = await products.CountAsync();
+
+            var items = await products
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToListAsync();
+
+            return (
+                items.Select(MapToDTO).ToList(),
+                totalItems
+            );
+        }
+        public async Task<ProductDTO?> GetByIdAsync(string maSP)
+        {
+            var product = await _context.SanPhams
+                .AsNoTracking()
+                .Include(x => x.LoaiSP)
+                .Include(x => x.ThuongHieu)
+                .FirstOrDefaultAsync(x => x.MaSP == maSP);
+
+            return product == null ? null : MapToDTO(product);
+        }
+
+        public async Task<List<ProductDTO>> GetNewestAsync(int count)
+        {
+            return await _context.SanPhams
+                .AsNoTracking()
+                .Include(x => x.LoaiSP)
+                .Include(x => x.ThuongHieu)
+                .Where(x => x.TT)
+                .OrderByDescending(x => x.CreatedDate)
+                .Take(count)
+                .Select(x => MapToDTO(x))
+                .ToListAsync();
+        }
+
+        public async Task<List<ProductDTO>> GetFeaturedAsync(int count)
+        {
+            return await _context.SanPhams
+                .AsNoTracking()
+                .Include(x => x.LoaiSP)
+                .Include(x => x.ThuongHieu)
+                .Where(x => x.TT)
+                .OrderByDescending(x => x.SoLuongTon)
+                .Take(count)
+                .Select(x => MapToDTO(x))
+                .ToListAsync();
+        }
+
+        public async Task<List<ProductDTO>> GetRelatedAsync(string maSP)
+        {
+            var product = await _context.SanPhams
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.MaSP == maSP);
+
+            if (product == null)
+                return new List<ProductDTO>();
+
+            return await _context.SanPhams
+                .AsNoTracking()
+                .Include(x => x.LoaiSP)
+                .Include(x => x.ThuongHieu)
+                .Where(x => x.MaLoai == product.MaLoai
+                         && x.MaSP != maSP
+                         && x.TT)
+                .Take(4)
+                .Select(x => MapToDTO(x))
+                .ToListAsync();
         }
     }
 }
