@@ -85,14 +85,14 @@
                                         }
                                     </td>
                                     <td>
-                                         
+
                                         <!-- Nút Xem Chi Tiết Phiếu Nhập -->
                                         <a href="/Admin/PhieuNhap/Details/@item.MaPN" class="btn btn-sm btn-light text-info" title="Xem Chi Tiết"><i class="fa-regular fa-eye fs-6"></i> </a>
-                                        
+
                                         <a href="/Admin/PhieuNhap/Edit/@item.MaPN" class="btn btn-sm btn-light text-warning" title="Sửa">
                                             <i class="fa-regular fa-pen-to-square fs-6"></i>
                                         </a>
-                                        
+
                                         <button type="button" onclick="confirmDelete('@item.MaPN')" class="btn btn-sm btn-light text-danger" title="Xóa">
                                             <i class="fa-regular fa-trash-can fs-6"></i>
                                         </button>
@@ -115,32 +115,32 @@
 
 <script>
     function confirmDelete(id) {
-        Swal.fire({
-            title: 'Xác nhận xóa?',
-            text: "Bạn có chắc chắn muốn xóa phiếu nhập " + id + " này không?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Đồng ý xóa',
-            cancelButtonText: 'Hủy'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch('/Admin/PhieuNhap/Delete/' + id, {
-                    method: 'POST'
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire('Đã xóa!', data.message, 'success').then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire('Lỗi!', data.message, 'error');
-                        }
-                    });
-            }
-        });
+    Swal.fire({
+    title: 'Xác nhận xóa?',
+    text: "Bạn có chắc chắn muốn xóa phiếu nhập " + id + " này không?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Đồng ý xóa',
+    cancelButtonText: 'Hủy'
+    }).then((result) => {
+    if (result.isConfirmed) {
+    fetch('/Admin/PhieuNhap/Delete/' + id, {
+    method: 'POST'
+    })
+    .then(res => res.json())
+    .then(data => {
+    if (data.success) {
+    Swal.fire('Đã xóa!', data.message, 'success').then(() => {
+    location.reload();
+    });
+    } else {
+    Swal.fire('Lỗi!', data.message, 'error');
+    }
+    });
+    }
+    });
     }
     @if (TempData["SuccessMessage"] != null)
     {
@@ -151,7 +151,7 @@
                     icon: 'success',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#0d6efd'
-                    });
+                                });
         </script>
     }
-}
+    }
