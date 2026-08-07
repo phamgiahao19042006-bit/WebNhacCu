@@ -1,0 +1,84 @@
+﻿@model CoreDatabase.Models.LoaiSP
+@{
+    ViewData["Title"] = "Thêm Loại Sản Phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-0">
+    <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+        <h3 class="fw-bold mb-0 text-uppercase" style="color: #2c1d11;">[+ THÊM LOẠI SẢN PHẨM MỚI]</h3>
+        <a href="/Admin/LoaiSanPham" class="btn btn-outline-secondary">Quay lại</a>
+    </div>
+
+    <div class="card border-0 shadow-sm" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <form id="createForm" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mã loại sản phẩm <span class="text-danger">*</span></label>
+                    <input name="MaLoai" class="form-control" placeholder="Nhập mã (Ví dụ: L01, GUITAR...)" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên loại sản phẩm <span class="text-danger">*</span></label>
+                    <input name="TenLoai" class="form-control" placeholder="Nhập tên loại sản phẩm..." required />
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold d-block">Trạng thái kinh doanh</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="TT" value="true" checked id="ttTrue">
+                        <label class="form-check-label text-success fw-bold" for="ttTrue">Hoạt động</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="TT" value="false" id="ttFalse">
+                        <label class="form-check-label text-danger fw-bold" for="ttFalse">Tạm khóa</label>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 border-top pt-3">
+                    <button type="submit" class="btn text-white fw-bold" style="background-color: #c5a059;">Lưu thông tin</button>
+                    <a href="/Admin/LoaiSanPham" class="btn btn-light border">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('createForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('/Admin/LoaiSanPham/Create', {
+            method: 'POST',
+            body: formData
+        })
+            .then(async response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Thành công!',
+                        text: 'Thêm loại sản phẩm mới thành công!',
+                        icon: 'success',
+                        confirmButtonColor: '#c5a059',
+                        confirmButtonText: 'Đồng ý'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/Admin/LoaiSanPham';
+                        }
+                    });
+                } else {
+                    const errorText = await response.text();
+                    Swal.fire({
+                        title: 'Thất bại!',
+                        text: errorText || 'Dữ liệu không hợp lệ!',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            });
+    });
+</script>

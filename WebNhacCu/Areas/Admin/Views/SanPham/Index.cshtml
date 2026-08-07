@@ -1,0 +1,77 @@
+﻿@model IEnumerable<CoreDatabase.Models.SanPham> // ⚠️ Thay namespace
+
+@{
+    ViewData["Title"] = "Quản lý Sản Phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold text-uppercase m-0">Danh Sách Sản Phẩm</h4>
+        <a href="/Admin/SanPham/Create" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-1"></i> Thêm sản phẩm mới
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-3">Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Loại</th>
+                        <th>Thương hiệu</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng tồn</th>
+                        <th class="text-end pe-3">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-3">
+                                <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/no-image.png" : item.HinhAnh)"
+                                     alt="@item.TenSP" class="rounded border" style="width: 50px; height: 50px; object-fit: cover;" />
+                            </td>
+                            <td class="fw-semibold">@item.TenSP</td>
+                            <td><span class="badge bg-secondary">@(item.LoaiSP?.TenLoai ?? "Chưa phân loại")</span></td>
+                            <td>@(item.ThuongHieu?.TenTH ?? "-")</td>
+                            <td class="text-danger fw-bold">@item.DonGia.ToString("N0") đ</td>
+                            <td>
+                                <span class="badge @(item.SoLuongTon > 5 ? "bg-success" : "bg-warning text-dark")">
+                                    @item.SoLuongTon
+                                </span>
+                            </td>
+                            <td class="text-end pe-3">
+                                <a href="/Admin/SanPham/Edit/@item.MaSP" class="btn btn-sm btn-outline-warning me-1">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteSanPham(@item.MaSP)">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteSanPham(id) {
+        if (confirm("Hào có chắc chắn muốn xóa sản phẩm này không?")) {
+            fetch('/Admin/SanPham/Delete/' + id, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert("Xóa thất bại!");
+                    }
+                });
+        }
+    }
+</script>

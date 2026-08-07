@@ -1,0 +1,150 @@
+﻿@model IEnumerable<CoreDatabase.Models.LoaiSP>
+@{
+    ViewData["Title"] = "Loại Sản Phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<!-- Thư viện Thông báo Pop-up SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-0">
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom">
+        <h3 class="fw-bold mb-0 text-uppercase" style="color: #2c1d11;">| LOẠI SẢN PHẨM</h3>
+        <a href="/Admin/LoaiSanPham/Create" class="btn text-white fw-bold px-3 shadow-sm" style="background-color: #c5a059;">
+            [+ Thêm mới]
+        </a>
+    </div>
+
+    <!-- Khung Tìm kiếm & Lọc -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            <form action="/Admin/LoaiSanPham" method="get" class="row g-3 align-items-center">
+                <div class="col-md-5 d-flex align-items-center gap-2">
+                    <label class="fw-bold text-nowrap"><i class="fa-solid fa-magnifying-glass me-1"></i> Tìm kiếm:</label>
+                    <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="[ Nhập mã hoặc tên... ]" />
+                    <button type="submit" class="btn text-white fw-bold" style="background-color: #2c1d11;">[Tìm]</button>
+                </div>
+
+                <div class="col-md-4 d-flex align-items-center gap-2">
+                    <label class="fw-bold text-nowrap">Trạng thái:</label>
+                    <select name="statusFilter" class="form-select" onchange="this.form.submit()">
+                        <option value="">[Tất cả]</option>
+                        <option value="true" selected="@(ViewBag.StatusFilter == "true")">Hoạt động</option>
+                        <option value="false" selected="@(ViewBag.StatusFilter == "false")">Tạm khóa</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 text-end">
+                    <a href="/Admin/LoaiSanPham" class="btn btn-outline-secondary btn-sm">Đặt lại</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bảng Dữ Liệu -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr class="border-bottom">
+                            <th class="ps-3 py-3" style="width: 120px;">| Mã</th>
+                            <th class="py-3">| Tên loại</th>
+                            <th class="py-3" style="width: 160px;">| Trạng thái</th>
+                            <th class="text-center py-3 pe-3" style="width: 160px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-3 fw-bold text-primary">@item.MaLoai</td>
+                                    <td class="fw-semibold" style="color: #2c1d11;">@item.TenLoai</td>
+                                    <td>
+                                        @if (item.TT == true)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border px-2 py-1">Hoạt động</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border px-2 py-1">Tạm khóa</span>
+                                        }
+                                    </td>
+                                    <td class="text-center pe-3">
+                                        <a href="/Admin/LoaiSanPham/Edit/@item.MaLoai" class="btn btn-sm btn-outline-warning me-1" title="Sửa">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete('@item.MaLoai', '@item.TenLoai')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">Không có dữ liệu loại sản phẩm nào!</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AntiForgeryToken ẩn phục vụ việc xóa AJAX -->
+@Html.AntiForgeryToken()
+
+<script>
+    function confirmDelete(id, name) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: `Bạn có chắc chắn muốn xóa loại sản phẩm "${name}" (${id})?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                const formData = new FormData();
+                formData.append("id", id);
+                formData.append("__RequestVerificationToken", token);
+
+                fetch('/Admin/LoaiSanPham/Delete', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(async response => {
+                        if (response.ok) {
+                            Swal.fire({
+                                title: 'Thành công!',
+                                text: 'Xóa loại sản phẩm thành công!',
+                                icon: 'success',
+                                confirmButtonColor: '#c5a059',
+                                confirmButtonText: 'Đồng ý'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            const errorText = await response.text();
+                            Swal.fire({
+                                title: 'Không thể xóa!',
+                                text: errorText || 'Đã có lỗi xảy ra!',
+                                icon: 'error',
+                                confirmButtonColor: '#d33'
+                            });
+                        }
+                    });
+            }
+        });
+    }
+</script>

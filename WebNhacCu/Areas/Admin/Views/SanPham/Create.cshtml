@@ -1,0 +1,102 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model CoreDatabase.Models.SanPham
+
+@{
+    ViewData["Title"] = "Thêm Sản Phẩm Mới";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4">
+    <div class="card border-0 shadow-sm" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-header bg-primary text-white fw-bold">
+            THÊM SẢN PHẨM MỚI
+        </div>
+        <div class="card-body">
+
+            <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
+
+            <form action="/Admin/SanPham/Create" method="post" enctype="multipart/form-data">
+
+                <!-- HÀNG 1: MÃ SP, TÊN SP, GIÁ BÁN -->
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Mã sản phẩm</label>
+                        <input type="text" asp-for="MaSP" class="form-control" placeholder="Nhập mã (VD: SP01)..." required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Tên sản phẩm</label>
+                        <input type="text" asp-for="TenSP" class="form-control" placeholder="Nhập tên sản phẩm..." required />
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Giá bán (VNĐ)</label>
+                        <input type="number" asp-for="DonGia" class="form-control" placeholder="0" required />
+                    </div>
+                </div>
+
+                <!-- HÀNG 2: LOẠI SẢN PHẨM, THƯƠNG HIỆU -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Loại sản phẩm</label>
+                        <select asp-for="MaLoai" asp-items="ViewBag.MaLoai" class="form-select" required>
+                            <option value="">-- Chọn Loại SP --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Thương hiệu</label>
+                        <select asp-for="MaTH" asp-items="ViewBag.MaTH" class="form-select" required>
+                            <option value="">-- Chọn Thương Hiệu --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- HÀNG 3: SỐ LƯỢNG TỒN, HÌNH Ô UPLOAD -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Số lượng tồn</label>
+                        <input type="number" asp-for="SoLuongTon" class="form-control" value="0" min="0" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Hình ảnh sản phẩm</label>
+                        <input type="file" name="HinhAnhFile" class="form-control" accept="image/*" />
+                    </div>
+                </div>
+
+                <!-- HÀNG 4: MÔ TẢ -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mô tả sản phẩm</label>
+                    <textarea asp-for="MoTa" class="form-control" rows="4" placeholder="Nhập mô tả chi tiết sản phẩm..."></textarea>
+                </div>
+
+                <!-- NÚT BẤM -->
+                <div class="text-end mt-4">
+                    <a href="/Admin/SanPham" class="btn btn-secondary me-2">Hủy</a>
+                    <button type="submit" class="btn btn-success">Lưu Sản Phẩm</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- TỰ ĐỘNG BẬT POPUP THÀNH CÔNG KHI LƯU -->
+@if (ViewBag.IsSuccess == true)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                title: 'Thêm sản phẩm thành công!',
+                text: 'Sản phẩm mới đã được lưu vào CSDL.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#198754',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/Admin/SanPham';
+                }
+            });
+        });
+    </script>
+}

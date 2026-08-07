@@ -1,0 +1,67 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model CoreDatabase.Models.ThuongHieu
+
+@{
+    ViewData["Title"] = "Thêm Thương Hiệu Mới";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<!-- Nhúng thư viện SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4">
+    <div class="card border-0 shadow-sm" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-header bg-primary text-white fw-bold">
+            THÊM THƯƠNG HIỆU MỚI
+        </div>
+        <div class="card-body">
+
+            <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
+
+            <form action="/Admin/ThuongHieu/Create" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mã thương hiệu</label>
+                    <input type="text" name="MaTH" class="form-control" value="@Model?.MaTH" placeholder="Nhập mã TH (VD: TH01, YMH...)" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên thương hiệu</label>
+                    <input type="text" name="TenTH" class="form-control" value="@Model?.TenTH" placeholder="Nhập tên thương hiệu..." required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Quốc gia</label>
+                    <textarea name="QuocGia" class="form-control" rows="3" placeholder="Nhập quốc gia...">@Model?.QuocGia</textarea>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a href="/Admin/ThuongHieu" class="btn btn-secondary me-2">Hủy</a>
+                    <button type="submit" class="btn btn-success">Lưu Thương Hiệu</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- ĐOẠN SỰ KIỆN: HIỆN BẢNG THÀNH CÔNG -> BẤM OK MỚI CHUYỂN TRANG -->
+@if (ViewBag.IsSuccess == true)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                title: 'Thêm thành công!',
+                text: 'Thương hiệu mới đã được lưu vào hệ thống.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#198754',
+                allowOutsideClick: false // Bắt buộc phải bấm OK chứ không bấm ra ngoài được
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Người dùng bấm OK xong mới chuyển về trang Thương hiệu
+                    window.location.href = '/Admin/ThuongHieu';
+                }
+            });
+        });
+    </script>
+}

@@ -1,6 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using WebNhacCu.Data;
-using WebNhacCu.Interfaces;
 using WebNhacCu.Models.EF;
 using WebNhacCu.Services;
 using WebNhacCu.Services.Interfaces;
@@ -9,15 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<WebHeThongBanNhacCuContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("WebHeThongBanNhacCudb")));
-builder.Services.AddScoped<IProductService, ProductService>(); 
+builder.Services.AddDbContext<WebHeThongBanNhacCuContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WebHeThongBanNhacCudb"))
+           .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
+);
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    var context = services.GetRequiredService<WebHeThongBanNhacCuContext>();
 
     DataSeeder.Seed(context);
 }
@@ -47,5 +42,4 @@ app.MapAreaControllerRoute(
     areaName: "Admin",
     pattern: "Admin/{controller=Home}/{action=Index}/{id?}"
     );
-
 app.Run();

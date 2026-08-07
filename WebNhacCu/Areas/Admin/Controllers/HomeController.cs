@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebNhacCu.Areas.Admin.Models;
 using WebNhacCu.Models.EF; // Namespace DbContext của bạn
 
 namespace WebNhacCu.Areas.Admin.Controllers
@@ -7,17 +8,39 @@ namespace WebNhacCu.Areas.Admin.Controllers
     [Area("Admin")]
     public class HomeController : Controller
     {
-        private readonly WebHeThongBanNhacCuContext _context;
+        private readonly WebHeThongBanNhacCuContext _context; // Đổi tên DbContext của bạn
 
         public HomeController(WebHeThongBanNhacCuContext context)
         {
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var now = DateTime.Now;
+
+            var dashboardData = new DashboardViewModel
+            {
+                // 1. Tính tổng tiền các hóa đơn thành công trong tháng này
+                DoanhThuThang = await _context.HoaDons
+                    .Where(h => h.NgayLap.Month == now.Month && h.NgayLap.Year == now.Year)
+                    .SumAsync(h => (decimal?)h.TongTien) ?? 0,
+
+                // 2. Đếm số hóa đơn mới lập trong tháng này
+                HoaDonMoi = await _context.HoaDons
+                    .CountAsync(h => h.NgayLap.Month == now.Month && h.NgayLap.Year == now.Year),
+
+                // 3. Tổng số lượng sản phẩm đang tồn kho
+                SanPhamTonKho = await _context.SanPhams
+                    .SumAsync(s => (int?)s.SoLuongTon) ?? 0,
+
+                // 4. Đếm số khách hàng mới đăng ký trong tháng này
+                KhachHangMoi = await _context.KhachHangs.CountAsync(k => k.CreatedDate.Month == now.Month && k.CreatedDate.Year == now.Year)
+                
+            };
+            return View(dashboardData);
         }
+        
 
         // --- API TÌM KIẾM NHANH TOPBAR (FIX LỖI LINQ & SQL) ---
         [HttpGet]
