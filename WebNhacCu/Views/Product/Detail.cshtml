@@ -1,0 +1,23 @@
+﻿@model WebNhacCu.Models.ViewModels.ProductDetailViewModel
+
+<h2>@Model.Product!.TenSP</h2>
+
+<img src="~/images/products/@Model.Product.HinhAnh"
+     width="350" />
+
+<h3>@Model.Product.DonGia.ToString("N0") VNĐ</h3>
+
+<p>@Model.Product.MoTa</p>
+
+<hr />
+
+<h3>Sản phẩm liên quan</h3>
+
+<div class="product-list">
+
+    @foreach (var product in Model.RelatedProducts)
+    {
+        <partial name="_ProductCard" model="product" />
+    }
+
+</div>

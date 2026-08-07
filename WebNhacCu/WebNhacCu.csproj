@@ -32,7 +32,6 @@
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Contact\" />
     <Folder Include="Views\News\" />
-    <Folder Include="Views\Product\" />
     <Folder Include="wwwroot\image\banners\" />
     <Folder Include="wwwroot\image\brands\" />
     <Folder Include="wwwroot\image\categories\" />
