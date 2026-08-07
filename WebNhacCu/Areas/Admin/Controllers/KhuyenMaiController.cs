@@ -27,12 +27,97 @@ namespace WebNhacCu.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(KhuyenMai km)
         {
+            // Bỏ qua validate các trường Audit/Navigation không bắt buộc từ Form
+            ModelState.Remove("CTKhuyenMais");
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("UpdatedBy");
+
             if (ModelState.IsValid)
             {
-                _context.KhuyenMais.Add(km);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Gán ngày tạo mặc định
+                    km.CreatedDate = DateTime.Now;
+                    km.UpdatedDate = DateTime.Now;
+
+                    _context.KhuyenMais.Add(km);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Thêm khuyến mãi thành công!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Error = "Lỗi lưu dữ liệu: " + ex.Message;
+                }
             }
+            else
+            {
+                // Lấy danh sách lỗi ra để debug nếu Form vẫn không hợp lệ
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                ViewBag.Error = "Dữ liệu không hợp lệ: " + string.Join(" | ", errors);
+            }
+
+            return View(km);
+        }
+
+        // GET: Admin/KhuyenMai/Edit/KM0001
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return NotFound();
+
+            var km = await _context.KhuyenMais.FindAsync(id);
+            if (km == null) return NotFound();
+
+            return View(km);
+        }
+
+        // POST: Admin/KhuyenMai/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, KhuyenMai km)
+        {
+            if (id != km.MaKM) return BadRequest();
+
+            // Bỏ qua validate các trường không cần thiết từ Form
+            ModelState.Remove("CTKhuyenMais");
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("UpdatedBy");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var existingKM = await _context.KhuyenMais.FindAsync(id);
+                    if (existingKM == null) return NotFound();
+
+                    // Cập nhật các trường thông tin
+                    existingKM.TenKhuyenMai = km.TenKhuyenMai;
+                    existingKM.LoaiGiam = km.LoaiGiam;
+                    existingKM.GiaTriGiam = km.GiaTriGiam;
+                    existingKM.NgayBatDau = km.NgayBatDau;
+                    existingKM.NgayKetThuc = km.NgayKetThuc;
+                    existingKM.DieuKienApDung = km.DieuKienApDung;
+                    existingKM.TT = km.TT;
+                    existingKM.UpdatedDate = DateTime.Now;
+
+                    _context.Update(existingKM);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Error = "Lỗi khi cập nhật: " + ex.Message;
+                }
+            }
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                ViewBag.Error = "Dữ liệu không hợp lệ: " + string.Join(" | ", errors);
+            }
+
             return View(km);
         }
 
