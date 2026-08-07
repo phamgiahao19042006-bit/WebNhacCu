@@ -17,58 +17,48 @@
         </a>
     </div>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i> @ViewBag.Error
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
     <div class="card border-0 shadow-sm p-4">
-        <form action="/Admin/KhuyenMai/Create" method="post">
+        <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark">Mã Khuyến Mãi <span class="text-danger">*</span></label>
-                    <input type="text" name="MaKM" value="@Model?.MaKM" class="form-control" placeholder="Ví dụ: KM0001" required />
+                    <input asp-for="MaKM" class="form-control" placeholder="Ví dụ: KM0001" required />
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark">Tên Chương Trình Khuyến Mãi <span class="text-danger">*</span></label>
-                    <input type="text" name="TenKhuyenMai" value="@Model?.TenKhuyenMai" class="form-control" placeholder="Ví dụ: Giảm giá mùa hè" required />
+                    <input asp-for="TenKhuyenMai" class="form-control" placeholder="Ví dụ: Giảm giá mùa hè" required />
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark">Loại Giảm</label>
-                    <select name="LoaiGiam" class="form-select">
+                    <select asp-for="LoaiGiam" class="form-select">
                         <option value="Giảm theo %">Giảm theo %</option>
                         <option value="Giảm theo tiền">Giảm theo tiền</option>
                     </select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark">Giá Trị Giảm <span class="text-danger">*</span></label>
-                    <input type="number" step="any" name="GiaTriGiam" value="@Model?.GiaTriGiam" class="form-control" placeholder="Ví dụ: 10 hoặc 50000" required />
+                    <input asp-for="GiaTriGiam" type="number" step="any" class="form-control" placeholder="Ví dụ: 10 (nếu là %) hoặc 50000" required />
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark">Ngày Bắt Đầu <span class="text-danger">*</span></label>
-                    <input type="date" name="NgayBatDau" value="@(Model?.NgayBatDau != null ? Model.NgayBatDau.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd"))" class="form-control" required />
+                    <input asp-for="NgayBatDau" type="date" class="form-control" required />
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark">Ngày Kết Thúc <span class="text-danger">*</span></label>
-                    <input type="date" name="NgayKetThuc" value="@(Model?.NgayKetThuc != null ? Model.NgayKetThuc.ToString("yyyy-MM-dd") : DateTime.Now.AddDays(7).ToString("yyyy-MM-dd"))" class="form-control" required />
+                    <input asp-for="NgayKetThuc" type="date" class="form-control" required />
                 </div>
 
                 <div class="col-md-12">
                     <label class="form-label fw-bold text-dark">Điều Kiện Áp Dụng</label>
-                    <input type="text" name="DieuKienApDung" value="@Model?.DieuKienApDung" class="form-control" placeholder="Ví dụ: Đơn hàng từ 500,000đ" />
+                    <input asp-for="DieuKienApDung" class="form-control" placeholder="Ví dụ: Đơn hàng từ 500,000đ" />
                 </div>
 
                 <div class="col-md-12">
                     <div class="form-check form-switch mt-2">
-                        <!-- Trick đảm bảo gửi giá trị boolean true/false chuẩn lên C# -->
-                        <input type="hidden" name="TT" value="false" />
-                        <input class="form-check-input" type="checkbox" name="TT" value="true" checked />
+                        <input class="form-check-input" type="checkbox" asp-for="TT" checked>
                         <label class="form-check-label fw-bold text-dark">Kích hoạt ngay (Trạng thái)</label>
                     </div>
                 </div>
