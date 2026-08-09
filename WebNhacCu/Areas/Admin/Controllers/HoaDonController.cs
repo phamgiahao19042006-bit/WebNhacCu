@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CoreDatabase.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CoreDatabase.Models;
 using WebNhacCu.Models.EF; // Kiem tra lai Namespace DbContext cua Hao
+using WebNhacCu.Models.ViewModels;
 
 namespace WebNhacCu.Areas.Admin.Controllers
 {
@@ -19,41 +20,85 @@ namespace WebNhacCu.Areas.Admin.Controllers
         // 1. CHỨC NĂNG: LẬP HÓA ĐƠN
         // URL: /Admin/HoaDon/LapHoaDon
         // ==========================================
+        // 1. GET: Admin/HoaDon/LapHoaDon
+        // 1. GET: Admin/HoaDon/LapHoaDon
         [HttpGet]
         public async Task<IActionResult> LapHoaDon()
         {
-            ViewBag.KhachHang = await _context.KhachHangs.ToListAsync();
+            ViewBag.KhachHang = await _context.KhachHangs
+                .Select(k => new KhachHang { MaKH = k.MaKH, HoTen = k.HoTen })
+                .ToListAsync();
+
             ViewBag.NhanVien = await _context.NhanViens.ToListAsync();
 
+            ViewBag.SanPham = await _context.SanPhams
+                .Select(s => new { s.MaSP, s.TenSP, s.DonGia })
+                .ToListAsync();
+
+            // 📌 Thêm khởi tạo model mới tại đây để truyền sang View
             var model = new HoaDon
             {
-                
                 NgayLap = DateTime.Now,
                 TongTien = 0,
                 GiamGia = 0,
                 ThanhTien = 0,
                 TT = true
             };
-            return View(model);
+
+            return View(model); // 👈 Truyền model vào đây
         }
 
+        // 2. POST: Admin/HoaDon/LapHoaDon (Lưu Hóa Đơn + Chi Tiết Hóa Đơn)
         [HttpPost]
-        public IActionResult LapHoaDon(HoaDon model)
+        public async Task<IActionResult> LapHoaDon([FromBody] LapHoaDonViewModel model)
         {
-            if (ModelState.IsValid)
+            // Bỏ qua bước check null cứng này để kiểm tra xem data vào chưa, 
+            // hoặc kiểm tra đúng biến ChiTiet
+            if (model == null || model.ChiTiet == null || model.ChiTiet.Count == 0)
             {
-                // 1. Lưu hóa đơn vào Database
-                _context.HoaDons.Add(model);
-                _context.SaveChanges();
-
-                // 2. Bắn thông báo thành công qua TempData
-                TempData["SuccessMessage"] = "Lập hóa đơn thành công!";
-
-                // 3. Quay lại trang danh sách Hóa Đơn (Hoặc trang Lập hóa đơn)
-                return RedirectToAction("Index");
+                // Ghi rõ để debug nếu cần
+                return Json(new { success = false, message = "Vui lòng chọn ít nhất 1 sản phẩm!" });
             }
 
-            return View(model);
+            try
+            {
+                // 1. Tạo hóa đơn mới
+                var hoaDon = new HoaDon
+                {
+                    MaHD = model.MaHD,
+                    NgayLap = model.NgayLap,
+                    MaKH = model.MaKH,
+                    MaNV = model.MaNV,
+                    PhuongThucTT = model.PhuongThucTT,
+                    GiamGia = model.GiamGia,
+                    TongTien = model.ChiTiet.Sum(x => x.DonGia * x.SoLuong),
+                    ThanhTien = model.ChiTiet.Sum(x => x.DonGia * x.SoLuong) - model.GiamGia,
+                    TT = model.TrangThai == 1
+                };
+
+                _context.HoaDons.Add(hoaDon);
+
+                // 2. Lưu danh sách Chi tiết hóa đơn
+                foreach (var item in model.ChiTiet)
+                {
+                    var ct = new CTHoaDon
+                    {
+                        MaHD = model.MaHD,
+                        MaSP = item.MaSP,
+                        DonGia = item.DonGia,
+                        SoLuong = item.SoLuong,
+                        
+                    };
+                    _context.CTHoaDons.Add(ct);
+                }
+
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Lập hóa đơn thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi lưu dữ liệu: " + ex.Message });
+            }
         }
 
         // Danh sách hóa đơn (Menu "Danh sách hóa đơn")

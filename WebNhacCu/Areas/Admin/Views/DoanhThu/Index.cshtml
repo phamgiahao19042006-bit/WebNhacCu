@@ -1,0 +1,192 @@
+﻿@model CoreDatabase.ViewModels.DoanhThuReportViewModel
+@{
+    ViewData["Title"] = "Báo Cáo Doanh Thu";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml"; // ⚠️ Kiểm tra lại đúng file Layout của Admin
+}
+
+<!-- Thư viện Chart.js & FontAwesome -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="container-fluid p-4 bg-light" style="min-height: 100vh;">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-primary m-0"><i class="fa-solid fa-chart-line me-2"></i>DOANH THU</h4>
+        <span class="text-muted"><i class="fa-solid fa-house"></i> Thống kê > <strong>Doanh thu</strong></span>
+    </div>
+
+    <!-- BỘ LỌC THỜI GIAN -->
+    <div class="card border-0 shadow-sm p-3 mb-4">
+        <form method="get" action="/Admin/DoanhThu" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Từ ngày:</label>
+                <input type="date" name="tuNgay" value="@Model.TuNgay.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Đến ngày:</label>
+                <input type="date" name="denNgay" value="@Model.DenNgay.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Nhóm theo:</label>
+                <select name="nhomTheo" class="form-select">
+                    <option value="Ngay" selected="@(Model.NhomTheo == "Ngay")">Ngày</option>
+                    <option value="Thang" selected="@(Model.NhomTheo == "Thang")">Tháng</option>
+                    <option value="Nam" selected="@(Model.NhomTheo == "Nam")">Năm</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary fw-semibold px-3"><i class="fa-solid fa-filter me-1"></i> Xem báo cáo</button>
+                <button type="button" class="btn btn-outline-success btn-sm fw-semibold" onclick="window.print()"><i class="fa-solid fa-print me-1"></i> In báo cáo</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 3 THẺ SUMMARY CARDS (Đã bỏ Tổng giảm giá) -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 bg-white h-100">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-primary text-white p-3 me-3">
+                        <i class="fa-solid fa-sack-dollar fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Tổng doanh thu</div>
+                        <h4 class="fw-bold text-primary mb-0">@Model.TongDoanhThu.ToString("N0") đ</h4>
+                        <small class="text-secondary" style="font-size: 11px;">(Bao gồm VAT)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 bg-white h-100">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-success text-white p-3 me-3">
+                        <i class="fa-solid fa-cart-shopping fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Tổng đơn hàng</div>
+                        <h4 class="fw-bold text-success mb-0">@Model.TongDonHang</h4>
+                        <small class="text-secondary" style="font-size: 11px;">Đơn</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 bg-white h-100">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-warning text-white p-3 me-3">
+                        <i class="fa-solid fa-wallet fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Giá trị đơn trung bình</div>
+                        <h4 class="fw-bold text-warning mb-0">@Model.GiaTriDonTrungBinh.ToString("N0") đ</h4>
+                        <small class="text-secondary" style="font-size: 11px;">/ Đơn</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KHU VỰC BIỂU ĐỒ VÀ BẢNG -->
+    <div class="row g-3">
+        <!-- BIỂU ĐỒ -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-chart-area me-1"></i> BIỂU ĐỒ DOANH THU</h6>
+                <div style="position: relative; height:320px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- BẢNG DỮ LIỆU -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-table me-1"></i> DOANH THU THEO @Model.NhomTheo.ToUpper()</h6>
+                <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Thời gian</th>
+                                <th class="text-end">Doanh thu</th>
+                                <th class="text-center">Đơn hàng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.ChiTietDoanhThu != null && Model.ChiTietDoanhThu.Any())
+                            {
+                                foreach (var item in Model.ChiTietDoanhThu)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@item.ThoiGian</td>
+                                        <td class="text-end text-primary fw-bold">@item.DoanhThu.ToString("N0") đ</td>
+                                        <td class="text-center">@item.SoDonHang</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-3">Không có dữ liệu trong khoảng thời gian này.</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light fw-bold sticky-bottom">
+                            <tr>
+                                <td>TỔNG CỘNG</td>
+                                <td class="text-end text-primary">@Model.TongDoanhThu.ToString("N0") đ</td>
+                                <td class="text-center text-success">@Model.TongDonHang</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT DRAW CHART -->
+<script>
+    const labels = [@Html.Raw(string.Join(",", Model.ChiTietDoanhThu.Select(x => $"'{x.ThoiGian}'")))];
+    const dataValues = [@string.Join(",", Model.ChiTietDoanhThu.Select(x => x.DoanhThu))];
+
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(13, 110, 253, 0.3)');
+    gradient.addColorStop(1, 'rgba(13, 110, 253, 0.0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: dataValues,
+                borderColor: '#0d6efd',
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#0d6efd'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString('vi-VN') + ' đ';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>

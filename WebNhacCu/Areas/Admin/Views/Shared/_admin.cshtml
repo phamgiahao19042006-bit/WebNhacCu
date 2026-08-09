@@ -74,9 +74,10 @@
                 </div>
                 <div class="submenu-container" id="menuThongKe">
                     <div class="sidebar-submenu">
-                        <a href="/Admin/ThongKeDoanhThu"><i class="fa-solid fa-coins"></i>Doanh thu</a>   
-                        <a href="/Admin/SanPhamBanChay"><i class="fa-solid fa-fire"></i>Sản phẩm bán chạy</a>
-                        <a href="/Admin/ThongKeNhapHang"><i class="fa-solid fa-truck-ramp-box"></i>Nhập hàng</a>
+                        <a href="/Admin/DoanhThu" class="nav-link"><i class="fa-solid fa-chart-line"></i> Doanh thu</a>
+                        <a href="/Admin/SanPhamBanChay" class="nav-link"><i class="fa-solid fa-fire"></i> Sản phẩm bán chạy</a>
+                        <!-- Sửa lại đường dẫn cho chuẩn -->
+                        <a href="/Admin/NhapHang" class="nav-link"><i class="fa fa-truck"></i> Nhập hàng</a>
                     </div>
                 </div>
 
@@ -90,8 +91,10 @@
                         <a href="/Admin/KhachHang"><i class="fa-solid fa-users"></i>Khách hàng</a>
                         <a href="/Admin/NhanVien"><i class="fa-solid fa-user-tie"></i>Nhân viên</a>
                         <a href="/Admin/PhanQuyen"><i class="fa-solid fa-user-shield"></i>Phân quyền</a>
-                        <a href="/Admin/DoiMatKhau"><i class="fa-solid fa-key"></i>Đổi mật khẩu</a>
-                        <a href="/Account/Logout" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i>Đăng xuất</a>
+                        <a href="/Logout" class="nav-link text-danger d-flex align-items-center gap-2">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    <span style="color: red; font-weight: bold;">Đăng xuất</span>
+</a>
                     </div>
                 </div>
 
@@ -121,5 +124,6 @@
                 }
             }
     </script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

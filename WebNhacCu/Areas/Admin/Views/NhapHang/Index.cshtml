@@ -1,0 +1,181 @@
+﻿@model WebNhacCu.Models.ViewModels.NhapHangViewModel
+@{
+    ViewData["Title"] = "Thống Kê Nhập Hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
+}
+
+<div class="container-fluid py-3">
+    <!-- Header Page -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold text-primary mb-0"><i class="fa fa-truck me-2"></i>NHẬP HÀNG</h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#"><i class="fa fa-home"></i> Thống kê</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Nhập hàng</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Thanh Bộ Lọc -->
+    <form method="get" action="/Admin/NhapHang/Index" class="card card-body shadow-sm mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label fw-bold small">Từ ngày:</label>
+                <input type="date" name="tuNgay" class="form-control" value="@Model.TừNgay.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-bold small">Đến ngày:</label>
+                <input type="date" name="denNgay" class="form-control" value="@Model.ĐếnNgay.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-bold small">Nhà cung cấp:</label>
+                <select name="maNCC" class="form-select">
+                    <option value="Tất cả">Tất cả</option>
+                    @if (ViewBag.NhaCungCapList != null)
+                    {
+                        foreach (var ncc in ViewBag.NhaCungCapList)
+                        {
+                            <option value="@ncc.MaNCC" selected="@(Model.MaNCC == ncc.MaNCC)">@ncc.TenNCC</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-bold small">Trạng thái:</label>
+                <select name="trangThai" class="form-select">
+                    <option value="Tất cả">Tất cả</option>
+                    <option value="Hoàn thành" selected="@(Model.TrangThaiLoc == "Hoàn thành")">Hoàn thành</option>
+                    <option value="Còn nợ" selected="@(Model.TrangThaiLoc == "Còn nợ")">Còn nợ</option>
+                    <option value="Chưa thanh toán" selected="@(Model.TrangThaiLoc == "Chưa thanh toán")">Chưa thanh toán</option>
+                </select>
+            </div>
+            <div class="col-md-4 text-end">
+                <button type="submit" class="btn btn-primary me-1"><i class="fa fa-search"></i> Xem báo cáo</button>
+                <button type="button" class="btn btn-outline-success me-1"><i class="fa fa-file-excel"></i> Xuất Excel</button>
+                <button type="button" onclick="window.print()" class="btn btn-outline-secondary"><i class="fa fa-print"></i> In báo cáo</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Thẻ Thống kê KPI -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-4 border-primary h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded me-3">
+                        <i class="fa fa-credit-card text-primary fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Tổng giá trị nhập</div>
+                        <h4 class="fw-bold text-primary mb-0">@Model.TongGiaTriNhap.ToString("N0") đ</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-4 border-success h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-3 rounded me-3">
+                        <i class="fa fa-download text-success fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Tổng phiếu nhập</div>
+                        <h4 class="fw-bold text-success mb-0">@Model.TongPhieuNhap <span class="fs-6 text-muted font-normal">Phiếu</span></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-4 border-warning h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded me-3">
+                        <i class="fa fa-box text-warning fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Sản phẩm nhập</div>
+                        <h4 class="fw-bold text-warning mb-0">@Model.TongSanPhamNhap <span class="fs-6 text-muted font-normal">Sản phẩm</span></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-4 border-danger h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded me-3">
+                        <i class="fa fa-truck text-danger fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Nhà cung cấp</div>
+                        <h4 class="fw-bold text-danger mb-0">@Model.TongNhaCungCap <span class="fs-6 text-muted font-normal">Nhà cung cấp</span></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng Dữ Liệu -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center">STT</th>
+                            <th>Mã phiếu nhập</th>
+                            <th>Ngày nhập</th>
+                            <th>Nhà cung cấp</th>
+                            <th>Nhân viên</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th class="text-end">Đã thanh toán</th>
+                            <th class="text-end">Còn nợ</th>
+                            <th class="text-center">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.DanhSachPhieuNhap != null && Model.DanhSachPhieuNhap.Count > 0)
+                        {
+                            int stt = 1;
+                            foreach (var item in Model.DanhSachPhieuNhap)
+                            {
+                                <tr>
+                                    <td class="text-center fw-bold">@(stt++)</td>
+                                    <td>
+                                        <a href="/Admin/NhapHang/ChiTiet/@item.MaPN" class="fw-bold text-primary text-decoration-none">
+                                            @item.MaPN
+                                        </a>
+                                    </td>
+                                    <td>@item.NgayNhap.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@item.TenNhaCungCap</td>
+                                    <td>@item.MaNV</td>
+                                    <td class="text-end fw-bold">@item.TongTien.ToString("N0") đ</td>
+                                    <td class="text-end">@item.DaThanhToan.ToString("N0") đ</td>
+                                    <td class="text-end text-danger fw-bold">@item.ConNo.ToString("N0") đ</td>
+                                    <td class="text-center">
+                                        @if (item.TrangThai == "Hoàn thành")
+                                        {
+                                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Hoàn thành</span>
+                                        }
+                                        else if (item.TrangThai == "Còn nợ")
+                                        {
+                                            <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2">Còn nợ</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-2">Chưa thanh toán</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-4 text-muted">Không tìm thấy dữ liệu phiếu nhập nào.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

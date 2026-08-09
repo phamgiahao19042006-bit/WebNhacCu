@@ -19,7 +19,26 @@ namespace WebNhacCu.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var list = await _context.KhachHangs.ToListAsync();
+            // Dùng SQL chuẩn hóa tất cả các cột có nguy cơ bị NULL về giá trị mặc định 
+            // trước khi EF Core gán dữ liệu vào Model KhachHang
+            var list = await _context.KhachHangs.FromSqlRaw(@"
+        SELECT 
+            MaKH,
+            ISNULL(TenDangNhap, '') AS TenDangNhap,
+            ISNULL(MatKhau, '') AS MatKhau,
+            ISNULL(HoTen, N'') AS HoTen,
+            ISNULL(SDT, '') AS SDT,
+            ISNULL(Email, '') AS Email,
+            ISNULL(DiaChi, N'') AS DiaChi,
+            ISNULL(DiemTichLuy, 0) AS DiemTichLuy,
+            ISNULL(TT, 1) AS TT,
+            ISNULL(CreatedDate, GETDATE()) AS CreatedDate,
+            ISNULL(UpdatedDate, GETDATE()) AS UpdatedDate,
+            ISNULL(CreatedBy, '') AS CreatedBy,
+            ISNULL(UpdatedBy, '') AS UpdatedBy
+        FROM KhachHang
+    ").ToListAsync();
+
             return View(list);
         }
 

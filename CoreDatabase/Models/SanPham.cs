@@ -40,6 +40,9 @@ namespace CoreDatabase.Models
         [Range(0, double.MaxValue, ErrorMessage = "Đơn giá phải lớn hơn hoặc bằng 0")]
         public decimal DonGia { get; set; }
 
+        [Display(Name = "Đơn vị tính")]
+        public string? DVT { get; set; } // 📌 Đổi sang string (hoặc string?) để nhận chuỗi "Cái", "Bộ"... và cho phép Null
+
         [Display(Name = "Số lượng tồn")]
         [Range(0, int.MaxValue, ErrorMessage = "Số lượng tồn phải lớn hơn hoặc bằng 0")]
         public int SoLuongTon { get; set; }

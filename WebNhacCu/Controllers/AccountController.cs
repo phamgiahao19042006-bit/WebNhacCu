@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebNhacCu.Controllers
 {
@@ -8,5 +9,6 @@ namespace WebNhacCu.Controllers
         {
             return View();
         }
+        
     }
 }

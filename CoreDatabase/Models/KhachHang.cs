@@ -11,24 +11,24 @@ namespace CoreDatabase.Models
         [Key]
         [StringLength(20)]
         [Display(Name = "Mã khách hàng")]
-        public string MaKH { get; set; } = null!;
+        public string? MaKH { get; set; } = null!;
 
         [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
         [StringLength(50)]
         [Display(Name = "Tên đăng nhập")]
-        public string TenDangNhap { get; set; } = null!;
+        public string? TenDangNhap { get; set; } = null!;
 
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
         [StringLength(255)]
         [Display(Name = "Mật khẩu")]
         // Lưu chuỗi đã hash (vd. BCrypt/PBKDF2), tuyệt đối không lưu plaintext.
         // Việc hash được xử lý ở Service layer khi triển khai Account Phase sau.
-        public string MatKhau { get; set; } = null!;
+        public string? MatKhau { get; set; } = null!;
 
         [Required(ErrorMessage = "Họ tên khách hàng không được để trống")]
         [StringLength(100)]
         [Display(Name = "Họ và tên")]
-        public string HoTen { get; set; } = null!;
+        public string? HoTen { get; set; } = null!;
 
         [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
         [StringLength(15)]
@@ -46,10 +46,10 @@ namespace CoreDatabase.Models
 
         [Display(Name = "Điểm tích lũy")]
         [Range(0, int.MaxValue, ErrorMessage = "Điểm tích lũy phải lớn hơn hoặc bằng 0")]
-        public int DiemTichLuy { get; set; } = 0;
+        public int? DiemTichLuy { get; set; } = 0;
 
         [Display(Name = "Trạng thái")]
-        public bool TT { get; set; } = true;
+        public bool? TT { get; set; } = true;
 
         // Audit
         public DateTime CreatedDate { get; set; } = DateTime.Now;

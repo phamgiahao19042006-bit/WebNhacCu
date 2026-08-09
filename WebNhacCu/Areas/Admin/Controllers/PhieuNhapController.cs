@@ -17,60 +17,68 @@ namespace WebNhacCu.Areas.Admin.Controllers
         }
 
         // 1. Danh sách Phiếu nhập
-        public async Task<IActionResult> Index(string search, DateTime? fromDate, DateTime? toDate)
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            var query = _context.PhieuNhaps.AsQueryable();
+            var dsPhieuNhap = await _context.PhieuNhaps
+                                            .OrderByDescending(p => p.NgayNhap)
+                                            .ToListAsync();
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                // Chỉ lọc theo MaPN hoặc MaNCC
-                query = query.Where(p => p.MaPN.Contains(search) || p.MaNCC.Contains(search));
-            }
-
-            if (fromDate.HasValue)
-            {
-                query = query.Where(p => p.NgayNhap >= fromDate.Value);
-            }
-
-            if (toDate.HasValue)
-            {
-                query = query.Where(p => p.NgayNhap <= toDate.Value.AddDays(1));
-            }
-
-            return View(await query.OrderByDescending(p => p.NgayNhap).ToListAsync());
+            return View(dsPhieuNhap);
         }
 
         // 2. Mở trang tạo mới (GET)
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             // Lấy tất cả danh sách Nhà Cung Cấp trong Database truyền sang View
             // (Bỏ điều kiện .Where để tránh bị lọc nhầm trường TT)
-            ViewBag.DsNhaCungCap = _context.NhaCCs.ToList();
-
+            ViewBag.NhaCungCapList = await _context.NhaCCs.ToListAsync();
+            ViewBag.SanPhamList = await _context.SanPhams.ToListAsync();
             return View();
         }
 
         // 3. Xử lý tạo mới (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PhieuNhap phieuNhap)
+        public async Task<IActionResult> Create(PhieuNhap phieuNhap, List<CTPhieuNhap> CTPhieuNhaps)
         {
+            // Bỏ qua validate các navigation properties tự động của Entity Framework
+            ModelState.Remove("MaNCCNavigation");
+            ModelState.Remove("ChiTietPhieuNhaps");
+
             try
             {
-                if (phieuNhap.TT == null) phieuNhap.TT = true;
+                // 1. Gán ngày tạo nếu trống
+                if (phieuNhap.NgayNhap == default)
+                {
+                    phieuNhap.NgayNhap = DateTime.Now;
+                }
 
+                // 2. Thêm Phiếu nhập chính vào DB
                 _context.PhieuNhaps.Add(phieuNhap);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); // Lưu để phát sinh/xác nhận MaPN
 
-                // Đặt thông báo thành công
-                TempData["SuccessMessage"] = "Thêm phiếu nhập mới thành công!";
+                // 3. Thêm danh sách Chi tiết phiếu nhập
+                if (CTPhieuNhaps != null && CTPhieuNhaps.Count > 0)
+                {
+                    foreach (var item in CTPhieuNhaps)
+                    {
+                        item.MaPN = phieuNhap.MaPN; // Khóa ngoại kết nối với Phiếu nhập
+                        _context.CTPhieuNhaps.Add(item);
+                    }
+                    await _context.SaveChangesAsync(); // Lưu chi tiết
+                }
+
+                // 4. Lưu xong -> Chuyển về trang danh sách NhapHang/PhieuNhap
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                ViewBag.Error = "Lỗi khi lưu dữ liệu: " + ex.Message;
-                ViewBag.DsNhaCungCap = _context.NhaCCs.ToList();
+                // Nếu có lỗi thì load lại danh sách dropdown và báo lỗi
+                ViewBag.NhaCungCapList = await _context.NhaCCs.ToListAsync();
+                ViewBag.SanPhamList = await _context.SanPhams.ToListAsync();
+                ModelState.AddModelError("", "Lỗi lưu phiếu nhập: " + ex.Message);
                 return View(phieuNhap);
             }
         }

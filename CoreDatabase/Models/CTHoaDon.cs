@@ -28,6 +28,8 @@ namespace CoreDatabase.Models
         [Range(0, double.MaxValue, ErrorMessage = "Đơn giá phải lớn hơn hoặc bằng 0")]
         public decimal DonGia { get; set; }
 
+        
+
         [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Thành tiền")]
         [Range(0, double.MaxValue, ErrorMessage = "Thành tiền phải lớn hơn hoặc bằng 0")]

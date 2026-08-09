@@ -1,85 +1,304 @@
 ﻿@model CoreDatabase.Models.HoaDon
 
-@{
-    ViewData["Title"] = "Lập Hóa Đơn";
-    Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
-}
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <div class="container-fluid p-4">
-    <h3 class="fw-bold mb-4 text-uppercase">🛒 LẬP HÓA ĐƠN MỚI</h3>
+    <h3 class="fw-bold mb-4 text-uppercase"><i class="fa fa-shopping-cart"></i> Lập Hóa Đơn Mới</h3>
 
-    <div class="card shadow-sm border-0" style="border-radius: 10px;">
-        <div class="card-header bg-dark text-white fw-bold">NHẬP THÔNG TIN HÓA ĐƠN (HoaDon)</div>
+    <!-- 1. KHỐI THÔNG TIN HÓA ĐƠN CHUNG -->
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 10px;">
+        <div class="card-header bg-dark text-white fw-bold">
+            <i class="fa fa-info-circle"></i> NHẬP THÔNG TIN HÓA ĐƠN (HoaDon)
+        </div>
         <div class="card-body">
-            <form action="/Admin/HoaDon/LapHoaDon" method="post">
-                @Html.AntiForgeryToken()
-
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold small">Mã Hóa Đơn <span class="text-danger">*</span></label>
-                        <input type="text" name="MaHD" class="form-control" placeholder="Nhập mã hóa đơn (VD: HD001)..." required />
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Ngày Lập</label>
-                        <input type="datetime-local" name="NgayLap" value="@Model.NgayLap.ToString("yyyy-MM-ddTHH:mm")" class="form-control" required />
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Khách Hàng (MaKH)</label>
-                        <select name="MaKH" class="form-select" required>
-                            @if (ViewBag.KhachHang != null)
-                            {
-                                foreach (var kh in ViewBag.KhachHang)
-                                {
-                                    <option value="@kh.MaKH">@kh.MaKH - @kh.HoTen</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Nhân Viên Lập (MaNV)</label>
-                        <select name="MaNV" class="form-select" required>
-                            @if (ViewBag.NhanVien != null)
-                            {
-                                foreach (var nv in ViewBag.NhanVien)
-                                {
-                                    <option value="@nv.MaNV">@nv.MaNV - @nv.HoTen</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Phương Thức Thanh Toán</label>
-                        <select name="PhuongThucTT" class="form-select">
-                            <option value="Tiền mặt">Tiền mặt</option>
-                            <option value="Chuyển khoản">Chuyển khoản</option>
-                            <option value="Thẻ">Thẻ ATM / Visa</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Giảm Giá (VNĐ)</label>
-                        <input type="number" name="GiamGia" value="0" min="0" class="form-control" />
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Trạng Thái (TT)</label>
-                        <select name="TT" class="form-select">
-                            <option value="true">Đã thanh toán</option>
-                            <option value="false">Chưa thanh toán</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-12 text-end mt-4">
-                        <button type="submit" class="btn btn-success btn-lg fw-bold px-5">💾 XÁC NHẬN LẬP HÓA ĐƠN</button>
-                    </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Mã Hóa Đơn <span class="text-danger">*</span></label>
+                    <input type="text" id="txtMaHD" class="form-control" placeholder="Nhập mã hóa đơn (VD: HD001)..." required />
                 </div>
-            </form>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Ngày Lập</label>
+                    <input type="datetime-local" id="txtNgayLap" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Khách Hàng (MaKH)</label>
+                    <select id="selectKhachHang" class="form-select">
+                        @if (ViewBag.KhachHang != null)
+                        {
+                            foreach (var kh in ViewBag.KhachHang)
+                            {
+                                <option value="@kh.MaKH">@kh.MaKH - @kh.HoTen</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Nhân Viên Lập (MaNV)</label>
+                    <select id="selectNhanVien" class="form-select">
+                        @if (ViewBag.NhanVien != null)
+                        {
+                            foreach (var nv in ViewBag.NhanVien)
+                            {
+                                <option value="@nv.MaNV">@nv.MaNV - @nv.HoTen</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Phương Thức Thanh Toán</label>
+                    <select id="selectPTTT" class="form-select">
+                        <option value="Tiền mặt">Tiền mặt</option>
+                        <option value="Chuyển khoản">Chuyển khoản</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Giảm Giá (VNĐ)</label>
+                    <input type="number" id="txtGiamGia" class="form-control" value="0" min="0" onchange="capNhatBangChiTiet()" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Trạng Thái (TT)</label>
+                    <select id="selectTrangThai" class="form-select">
+                        <option value="true">Đã thanh toán</option>
+                        <option value="false">Chưa thanh toán</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text-end mt-3">
+                <a href="/Admin/HoaDon/Index" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> Quay lại
+                </a>
+                <button type="button" id="btnXacNhanLapHD" class="btn btn-success fw-bold px-4 py-2">
+                    <i class="fa fa-save"></i> XÁC NHẬN LẬP HÓA ĐƠN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. KHỐI CHI TIẾT HÓA ĐƠN (CTHoaDon) -->
+    <div class="card shadow-sm border-0" style="border-radius: 10px;">
+        <div class="card-header bg-dark text-white fw-bold">
+            <i class="fa fa-list"></i> CHI TIẾT HÓA ĐƠN (CTHoaDon)
+        </div>
+        <div class="card-body">
+            <!-- Form chọn sản phẩm -->
+            <div class="row g-2 mb-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Sản Phẩm (MaSP) <span class="text-danger">*</span></label>
+                    <select id="selectSanPham" class="form-select">
+                        <option value="">-- Chọn sản phẩm --</option>
+                        @if (ViewBag.SanPham != null)
+                        {
+                            foreach (var sp in ViewBag.SanPham)
+                            {
+                                <option value="@sp.MaSP" data-gia="@sp.DonGia">@sp.MaSP - @sp.TenSP</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small">Đơn Giá (VNĐ) <span class="text-danger">*</span></label>
+                    <input type="number" id="txtDonGia" class="form-control" value="0" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold small">Số Lượng <span class="text-danger">*</span></label>
+                    <input type="number" id="txtSoLuong" class="form-control" value="1" min="1" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold small">Đơn Vị Tính</label>
+                    <input type="text" id="txtDVT" class="form-control" value="Cái" />
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="btnThemSP" class="btn btn-outline-success w-100 fw-bold">
+                        <i class="fa fa-plus"></i> Thêm
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bảng danh sách chi tiết -->
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="tblChiTiet">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th style="width: 50px;">STT</th>
+                            <th>Mã SP</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Đơn Giá (VNĐ)</th>
+                            <th>Số Lượng</th>
+                            <th>Đơn Vị Tính</th>
+                            <th>Thành Tiền (VNĐ)</th>
+                            <th style="width: 80px;">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dữ liệu JS sẽ đổ vào đây -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tổng tiền -->
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="xoaTatCa()">
+                        <i class="fa fa-trash"></i> Xóa tất cả
+                    </button>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="mb-1">Tổng số lượng: <strong id="lblTongSoLuong">0</strong></p>
+                    <p class="mb-1">Tổng tiền hàng: <strong id="lblTongTienHang" class="text-primary">0 đ</strong></p>
+                    <p class="mb-1">Giảm giá: <strong id="lblGiamGia" class="text-danger">0 đ</strong></p>
+                    <h4 class="fw-bold mt-2">Thành tiền: <span id="lblThanhTien" class="text-danger">0 đ</span></h4>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- 3. JAVASCRIPT XỬ LÝ SỰ KIỆN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Mảng lưu danh sách chi tiết hóa đơn gửi về Controller
+    let danhSachChiTiet = [];
+
+    // 1. Sự kiện chọn sản phẩm -> Tự fill đơn giá
+    $('#selectSanPham').change(function() {
+        let gia = $(this).find(':selected').data('gia') || 0;
+        $('#txtDonGia').val(gia);
+    });
+
+    // 2. NÚT "+ THÊM" SẢN PHẨM
+    $('#btnThemSP').click(function() {
+        let selectSP = $('#selectSanPham');
+        let maSP = selectSP.val();
+        let tenSP = selectSP.find('option:selected').text();
+        let donGia = parseFloat($('#txtDonGia').val()) || 0;
+        let soLuong = parseInt($('#txtSoLuong').val()) || 1;
+        let dvt = $('#txtDVT').val() || 'Cái';
+
+        if (!maSP) {
+            alert('Vui lòng chọn một sản phẩm!');
+            return;
+        }
+
+        // Kiểm tra xem sản phẩm đã có trong mảng danhSachChiTiet chưa
+        let idx = danhSachChiTiet.findIndex(x => x.MaSP === maSP);
+        if (idx > -1) {
+            // Nếu đã có thì cộng dồn số lượng
+            danhSachChiTiet[idx].SoLuong += soLuong;
+        } else {
+            // Nếu chưa có thì PUSH MỚI vào mảng
+            danhSachChiTiet.push({
+                MaSP: maSP,
+                TenSP: tenSP,
+                DonGia: donGia,
+                SoLuong: soLuong,
+                DonViTinh: dvt
+            });
+        }
+
+        // Vẽ lại bảng và tính tiền
+        capNhatBangChiTiet();
+    });
+
+    // 3. Hàm cập nhật lại giao diện Bảng và Tổng tiền
+    function capNhatBangChiTiet() {
+        let tbody = $('#tblChiTiet tbody');
+        tbody.empty(); // Xóa sạch bảng cũ
+
+        let tongSL = 0;
+        let tongTien = 0;
+
+        danhSachChiTiet.forEach((item, index) => {
+            let thanhTien = item.DonGia * item.SoLuong;
+            tongSL += item.SoLuong;
+            tongTien += thanhTien;
+
+            let row = `<tr>
+                    <td class="text-center">${index + 1}</td>
+                    <td class="text-center">${item.MaSP}</td>
+                    <td>${item.TenSP}</td>
+                    <td class="text-end">${item.DonGia.toLocaleString('vi-VN')}</td>
+                    <td class="text-center">${item.SoLuong}</td>
+                    <td class="text-center">${item.DonViTinh}</td>
+                    <td class="text-end fw-bold">${thanhTien.toLocaleString('vi-VN')}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="xoaItem(${index})"><i class="fa fa-times"></i></button>
+                    </td>
+                </tr>`;
+            tbody.append(row);
+        });
+
+        let giamGia = parseFloat($('#txtGiamGia').val()) || 0;
+        let thanhTienFinal = tongTien - giamGia;
+
+        $('#lblTongSoLuong').text(tongSL);
+        $('#lblTongTienHang').text(tongTien.toLocaleString('vi-VN') + ' đ');
+        $('#lblGiamGia').text(giamGia.toLocaleString('vi-VN') + ' đ');
+        $('#lblThanhTien').text(thanhTienFinal.toLocaleString('vi-VN') + ' đ');
+    }
+
+    // Hàm xóa 1 món khỏi mảng
+    function xoaItem(index) {
+        danhSachChiTiet.splice(index, 1);
+        capNhatBangChiTiet();
+    }
+
+    // 4. NÚT XÁC NHẬN LẬP HÓA ĐƠN
+    $('#btnXacNhanLapHD').click(function() {
+        let maHD = $('#txtMaHD').val() ? $('#txtMaHD').val().trim() : '';
+        if (!maHD) {
+            alert('Vui lòng nhập Mã Hóa Đơn!');
+            return;
+        }
+
+        if (danhSachChiTiet.length === 0) {
+            alert('Vui lòng chọn ít nhất 1 sản phẩm!');
+            return;
+        }
+
+        // Map chuẩn tên thuộc tính với CTHoaDonItem trong C#
+        let danhSachSend = danhSachChiTiet.map(item => ({
+            MaSP: item.maSP || item.MaSP,
+            TenSP: item.tenSP || item.TenSP,
+            DonGia: parseFloat(item.donGia || item.DonGia || 0),
+            SoLuong: parseInt(item.soLuong || item.SoLuong || 1),
+            DonViTinh: item.donViTinh || item.DonViTinh || item.dvt || 'Cái'
+        }));
+
+        let postData = {
+            MaHD: maHD,
+            NgayLap: $('#txtNgayLap').val(),
+            MaKH: $('#selectKhachHang').val(),
+            MaNV: $('#selectNhanVien').val(),
+            PhuongThucTT: $('#selectPTTT').val(),
+            GiamGia: parseFloat($('#txtGiamGia').val()) || 0,
+            TrangThai: $('#selectTrangThai').val() === 'true' ? 1 : 0,
+            ChiTiet: danhSachSend
+        };
+
+        $.ajax({
+            url: '/Admin/HoaDon/LapHoaDon',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(postData),
+            success: function(res) {
+                if (res.success) {
+                    // 1. Hiện thông báo lập thành công
+                    alert(res.message);
+
+                    // 2. Reset dọn dẹp form để sẵn sàng nhập hóa đơn tiếp theo
+                    $('#txtMaHD').val('');
+                    $('#txtGiamGia').val(0);
+                    danhSachChiTiet = []; // Xóa danh sách chi tiết đã chọn
+                    capNhatBangChiTiet(); // Cập nhật lại giao diện bảng rỗng
+
+                    // 3. Tự động load lại trang Lập hóa đơn (hoặc reload trang)
+                    window.location.reload();
+                } else {
+                    alert(res.message);
+                }
+            },
+            error: function(err) {
+                alert('Lỗi kết nối tới Server!');
+            }
+        });
+    });
+</script>

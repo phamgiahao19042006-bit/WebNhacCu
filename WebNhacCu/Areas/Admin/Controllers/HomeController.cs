@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebNhacCu.Areas.Admin.Models;
 using WebNhacCu.Models.EF; // Namespace DbContext của bạn
@@ -104,6 +105,19 @@ namespace WebNhacCu.Areas.Admin.Controllers
                 .Concat(khachHangs);
 
             return Json(new { success = true, data = results });
+        }
+        // Thêm [Route("Logout")] 
+        [Route("Logout")]
+        public IActionResult Logout()
+        {
+            // Kiểm tra an toàn xem Session có khả dụng không mới Clear
+            if (HttpContext.Session != null)
+            {
+                HttpContext.Session.Clear();
+            }
+
+            // Chuyển hướng thẳng về trang chủ (Hình 1)
+            return Redirect("/");
         }
     }
 }
