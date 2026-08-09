@@ -27,7 +27,7 @@ namespace WebNhacCu.Areas.Admin.Controllers
 
             var model = new HoaDon
             {
-                MaHD = "HD" + DateTime.Now.ToString("yyMMddHHmmss"),
+                
                 NgayLap = DateTime.Now,
                 TongTien = 0,
                 GiamGia = 0,

@@ -15,22 +15,37 @@ namespace WebNhacCu.Areas.Admin.Controllers
             _context = context;
         }
 
-        // GET: Admin/KhuyenMai/Create (Hiển thị trang form)
+        // GET: Admin/KhuyenMai/Create
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var model = new KhuyenMai
+            {
+                NgayBatDau = DateTime.Now,
+                NgayKetThuc = DateTime.Now.AddDays(30),
+                TT = true
+            };
+            return View(model);
         }
 
-        // POST: Admin/KhuyenMai/Create (Xử lý lưu vào Database)
+        // POST: Admin/KhuyenMai/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(KhuyenMai km)
         {
+            ModelState.Remove("CTKhuyenMais");
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("UpdatedBy");
+
+            // Lấy trực tiếp giá trị checkbox từ Request Form
+            var ttForm = Request.Form["TT"].ToString();
+            km.TT = ttForm.Contains("true") || ttForm.Contains("on");
+
             if (ModelState.IsValid)
             {
                 _context.KhuyenMais.Add(km);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Thêm khuyến mãi thành công!";
                 return RedirectToAction(nameof(Index));
             }
             return View(km);
@@ -65,7 +80,7 @@ namespace WebNhacCu.Areas.Admin.Controllers
             {
                 query = query.Where(k => k.TT == trangThai.Value);
             }
-
+            var list = await _context.KhuyenMais.ToListAsync();
             return View(await query.OrderByDescending(k => k.NgayBatDau).ToListAsync());
         }
 
@@ -87,6 +102,53 @@ namespace WebNhacCu.Areas.Admin.Controllers
 
             ViewBag.ChiTietList = listCT;
 
+            return View(km);
+        }
+
+        // GET: Admin/KhuyenMai/Edit/KM0001
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return NotFound();
+
+            var km = await _context.KhuyenMais.FindAsync(id);
+            if (km == null) return NotFound();
+
+            return View(km);
+        }
+
+        // POST: Admin/KhuyenMai/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, KhuyenMai km)
+        {
+            if (id != km.MaKM) return BadRequest();
+
+            ModelState.Remove("CTKhuyenMais");
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("UpdatedBy");
+
+            if (ModelState.IsValid)
+            {
+                var existingKM = await _context.KhuyenMais.FindAsync(id);
+                if (existingKM != null)
+                {
+                    existingKM.TenKhuyenMai = km.TenKhuyenMai;
+                    existingKM.LoaiGiam = km.LoaiGiam;
+                    existingKM.GiaTriGiam = km.GiaTriGiam;
+                    existingKM.NgayBatDau = km.NgayBatDau;
+                    existingKM.NgayKetThuc = km.NgayKetThuc;
+                    existingKM.DieuKienApDung = km.DieuKienApDung;
+
+                    // Ép giá trị trạng thái chuẩn từ Form
+                    var ttForm = Request.Form["TT"].ToString();
+                    existingKM.TT = ttForm.Contains("true") || ttForm.Contains("on");
+
+                    _context.Update(existingKM);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
             return View(km);
         }
 

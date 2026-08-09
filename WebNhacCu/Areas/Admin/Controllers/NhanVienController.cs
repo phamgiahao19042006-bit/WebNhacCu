@@ -23,7 +23,7 @@ namespace WebNhacCu.Areas.Admin.Controllers
 
             NhanVien model = new NhanVien
             {
-                MaNV = "NV" + DateTime.Now.ToString("yyMMddHHmmss"),
+                
                 NgaySinh = DateTime.Now.AddYears(-18),
                 GioiTinh = "Nam",
                 TT = true
