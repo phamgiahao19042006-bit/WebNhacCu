@@ -80,7 +80,6 @@ namespace WebNhacCu.Areas.Admin.Controllers
             {
                 query = query.Where(k => k.TT == trangThai.Value);
             }
-            var list = await _context.KhuyenMais.ToListAsync();
             return View(await query.OrderByDescending(k => k.NgayBatDau).ToListAsync());
         }
 

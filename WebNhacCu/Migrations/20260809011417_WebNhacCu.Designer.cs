@@ -12,11 +12,7 @@ using WebNhacCu.Models.EF;
 namespace WebNhacCu.Migrations
 {
     [DbContext(typeof(WebHeThongBanNhacCuContext))]
-<<<<<<<< HEAD:WebNhacCu/Migrations/20260809011417_WebNhacCu.Designer.cs
     [Migration("20260809011417_WebNhacCu")]
-========
-    [Migration("20260807070416_WebNhacCu")]
->>>>>>>> 894a22f96176166d9d40f26df3616bb78f39a1ca:WebNhacCu/Migrations/20260807070416_WebNhacCu.Designer.cs
     partial class WebNhacCu
     {
         /// <inheritdoc />

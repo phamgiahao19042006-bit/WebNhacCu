@@ -111,32 +111,32 @@
 </div>
 <script>
     function confirmDelete(id) {
-    Swal.fire({
-    title: 'Xác nhận xóa?',
-    text: "Bạn có chắc chắn muốn xóa phiếu nhập " + id + " này không?",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#6c757d',
-    confirmButtonText: 'Đồng ý xóa',
-    cancelButtonText: 'Hủy'
-    }).then((result) => {
-    if (result.isConfirmed) {
-    fetch('/Admin/PhieuNhap/Delete/' + id, {
-    method: 'POST'
-    })
-    .then(res => res.json())
-    .then(data => {
-    if (data.success) {
-    Swal.fire('Đã xóa!', data.message, 'success').then(() => {
-    location.reload();
-    });
-    } else {
-    Swal.fire('Lỗi!', data.message, 'error');
-    }
-    });
-    }
-    });
+         Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Bạn có chắc chắn muốn xóa phiếu nhập " + id + " này không?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Admin/PhieuNhap/Delete/' + id, {
+                    method: 'POST'
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Đã xóa!', data.message, 'success').then(() => {
+                        location.reload();
+                        });
+                    } else {
+                        Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                });
+            }
+        });
     }
     @if (TempData["SuccessMessage"] != null)
     {
@@ -150,5 +150,4 @@
                                 });
         </script>
     }
-</script>
 }
