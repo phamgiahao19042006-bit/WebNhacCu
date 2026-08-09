@@ -222,12 +222,22 @@ namespace WebNhacCu.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("MatKhau")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("SDT")
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
                     b.Property<bool>("TT")
                         .HasColumnType("bit");
+
+                    b.Property<string>("TenDangNhap")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()

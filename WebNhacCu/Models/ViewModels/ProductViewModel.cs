@@ -1,4 +1,5 @@
-﻿using WebNhacCu.Models.DTO;
+﻿using CoreDatabase.Models;
+using WebNhacCu.Models.DTO;
 
 namespace WebNhacCu.Models.ViewModels
 {
@@ -8,6 +9,12 @@ namespace WebNhacCu.Models.ViewModels
             = Enumerable.Empty<ProductDTO>();
 
         public ProductQueryDTO Query { get; set; } = new();
+
+        public IEnumerable<LoaiSP> Categories { get; set; }
+            = Enumerable.Empty<LoaiSP>();
+
+        public IEnumerable<ThuongHieu> Brands { get; set; }
+            = Enumerable.Empty<ThuongHieu>();
 
         public int TotalItems { get; set; }
 

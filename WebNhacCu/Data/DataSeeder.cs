@@ -311,6 +311,18 @@ namespace WebNhacCu.Data
             context.SaveChanges();
         }
 
+        // Hash tạm thời (SHA256, không salt) chỉ phục vụ dữ liệu SEED/TEST bằng System.Security.Cryptography
+        // có sẵn trong .NET BCL, không thêm package mới theo đúng phạm vi bước này.
+        // Account module triển khai sau cần thống nhất cơ chế hashing chính thức
+        // (khuyến nghị PBKDF2/BCrypt kèm salt ngẫu nhiên) trước khi dùng cho đăng ký/đăng nhập thật.
+        private static string HashPassword(string plainPassword)
+        {
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var bytes = System.Text.Encoding.UTF8.GetBytes(plainPassword);
+            var hashBytes = sha256.ComputeHash(bytes);
+            return Convert.ToHexString(hashBytes);
+        }
+
         private static void SeedKhachHang(WebHeThongBanNhacCuContext context)
         {
             if (context.KhachHangs.Any())
@@ -320,6 +332,8 @@ namespace WebNhacCu.Data
                 new KhachHang
                 {
                     MaKH = "KH001",
+                    TenDangNhap = "quan",
+                    MatKhau = HashPassword("Khach@123"),
                     HoTen = "Nguyễn Minh Quân",
                     SDT = "0901111111",
                     Email = "quan@gmail.com",
@@ -332,6 +346,8 @@ namespace WebNhacCu.Data
                 new KhachHang
                 {
                     MaKH = "KH002",
+                    TenDangNhap = "bao",
+                    MatKhau = HashPassword("Khach@123"),
                     HoTen = "Trần Gia Bảo",
                     SDT = "0902222222",
                     Email = "bao@gmail.com",
@@ -344,6 +360,8 @@ namespace WebNhacCu.Data
                 new KhachHang
                 {
                     MaKH = "KH003",
+                    TenDangNhap = "linh",
+                    MatKhau = HashPassword("Khach@123"),
                     HoTen = "Lê Khánh Linh",
                     SDT = "0903333333",
                     Email = "linh@gmail.com",
@@ -356,6 +374,8 @@ namespace WebNhacCu.Data
                 new KhachHang
                 {
                     MaKH = "KH004",
+                    TenDangNhap = "hoanganh",
+                    MatKhau = HashPassword("Khach@123"),
                     HoTen = "Phạm Hoàng Anh",
                     SDT = "0904444444",
                     Email = "anh@gmail.com",
@@ -368,6 +388,8 @@ namespace WebNhacCu.Data
                 new KhachHang
                 {
                     MaKH = "KH005",
+                    TenDangNhap = "huy",
+                    MatKhau = HashPassword("Khach@123"),
                     HoTen = "Võ Đức Huy",
                     SDT = "0905555555",
                     Email = "huy@gmail.com",
@@ -573,6 +595,215 @@ namespace WebNhacCu.Data
                     MetaTitle = "bao-dan-guitar",
                     MetaKeyword = "bao guitar",
                     MetaDescription = "Bao đàn Guitar Acoustic.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP011",
+                    TenSP = "Yamaha Pacifica 112V",
+                    MaLoai = "L002",
+                    MaTH = "TH001",
+                    GiaNhap = 4800000,
+                    DonGia = 5900000,
+                    SoLuongTon = 6,
+                    HinhAnh = "yamaha-pacifica112v.jpg",
+                    MoTa = "Đàn Guitar Electric Yamaha Pacifica.",
+                    TT = true,
+                    MetaTitle = "yamaha-pacifica112v",
+                    MetaKeyword = "yamaha pacifica guitar electric",
+                    MetaDescription = "Yamaha Pacifica 112V.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP012",
+                    TenSP = "Fender Player Telecaster",
+                    MaLoai = "L002",
+                    MaTH = "TH002",
+                    GiaNhap = 17500000,
+                    DonGia = 21000000,
+                    SoLuongTon = 4,
+                    HinhAnh = "fender-player-telecaster.jpg",
+                    MoTa = "Đàn Guitar Electric Fender Telecaster.",
+                    TT = true,
+                    MetaTitle = "fender-player-telecaster",
+                    MetaKeyword = "fender telecaster guitar",
+                    MetaDescription = "Fender Player Telecaster.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP013",
+                    TenSP = "Ibanez AEG50 Guitar Acoustic",
+                    MaLoai = "L001",
+                    MaTH = "TH005",
+                    GiaNhap = 3400000,
+                    DonGia = 4200000,
+                    SoLuongTon = 11,
+                    HinhAnh = "ibanez-aeg50.jpg",
+                    MoTa = "Đàn Guitar Acoustic Ibanez AEG50.",
+                    TT = true,
+                    MetaTitle = "ibanez-aeg50",
+                    MetaKeyword = "ibanez aeg50 guitar acoustic",
+                    MetaDescription = "Ibanez AEG50.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP014",
+                    TenSP = "Casio PX-160 Privia",
+                    MaLoai = "L003",
+                    MaTH = "TH004",
+                    GiaNhap = 10200000,
+                    DonGia = 12500000,
+                    SoLuongTon = 5,
+                    HinhAnh = "casio-px160.jpg",
+                    MoTa = "Đàn Piano điện Casio Privia PX-160.",
+                    TT = true,
+                    MetaTitle = "casio-px160",
+                    MetaKeyword = "casio px160 piano",
+                    MetaDescription = "Casio PX-160 Privia.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP015",
+                    TenSP = "Roland Juno DS61",
+                    MaLoai = "L004",
+                    MaTH = "TH003",
+                    GiaNhap = 18000000,
+                    DonGia = 22000000,
+                    SoLuongTon = 3,
+                    HinhAnh = "roland-juno-ds61.jpg",
+                    MoTa = "Đàn Organ Roland Juno DS61.",
+                    TT = true,
+                    MetaTitle = "roland-juno-ds61",
+                    MetaKeyword = "roland juno organ",
+                    MetaDescription = "Roland Juno DS61.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP016",
+                    TenSP = "Yamaha YPT-270",
+                    MaLoai = "L004",
+                    MaTH = "TH001",
+                    GiaNhap = 2600000,
+                    DonGia = 3200000,
+                    SoLuongTon = 14,
+                    HinhAnh = "yamaha-ypt270.jpg",
+                    MoTa = "Đàn Organ Yamaha YPT-270.",
+                    TT = true,
+                    MetaTitle = "yamaha-ypt270",
+                    MetaKeyword = "yamaha ypt270 organ",
+                    MetaDescription = "Yamaha YPT-270.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP017",
+                    TenSP = "Fender Acoustasonic Guitar",
+                    MaLoai = "L001",
+                    MaTH = "TH002",
+                    GiaNhap = 24000000,
+                    DonGia = 28000000,
+                    SoLuongTon = 2,
+                    HinhAnh = "fender-acoustasonic.jpg",
+                    MoTa = "Đàn Guitar Acoustic Fender Acoustasonic.",
+                    TT = true,
+                    MetaTitle = "fender-acoustasonic",
+                    MetaKeyword = "fender acoustasonic guitar",
+                    MetaDescription = "Fender Acoustasonic Guitar.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP018",
+                    TenSP = "Dây đàn Guitar D'Addario EJ16",
+                    MaLoai = "L005",
+                    MaTH = "TH005",
+                    GiaNhap = 180000,
+                    DonGia = 220000,
+                    SoLuongTon = 60,
+                    HinhAnh = "daddario-ej16.jpg",
+                    MoTa = "Dây đàn Guitar D'Addario EJ16.",
+                    TT = true,
+                    MetaTitle = "daddario-ej16",
+                    MetaKeyword = "daddario guitar string",
+                    MetaDescription = "Dây đàn Guitar D'Addario EJ16.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP019",
+                    TenSP = "Móng gảy Guitar Dunlop (bộ 12 cái)",
+                    MaLoai = "L005",
+                    MaTH = "TH002",
+                    GiaNhap = 30000,
+                    DonGia = 45000,
+                    SoLuongTon = 100,
+                    HinhAnh = "dunlop-pick-set.jpg",
+                    MoTa = "Bộ móng gảy Guitar Dunlop 12 cái.",
+                    TT = true,
+                    MetaTitle = "dunlop-pick-set",
+                    MetaKeyword = "dunlop guitar pick",
+                    MetaDescription = "Móng gảy Guitar Dunlop.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP020",
+                    TenSP = "Yamaha Silent Guitar SLG200S",
+                    MaLoai = "L001",
+                    MaTH = "TH001",
+                    GiaNhap = 12500000,
+                    DonGia = 15500000,
+                    SoLuongTon = 0,
+                    HinhAnh = "yamaha-slg200s.jpg",
+                    MoTa = "Đàn Guitar Acoustic Yamaha Silent SLG200S (đang tạm hết hàng).",
+                    TT = true,
+                    MetaTitle = "yamaha-slg200s",
+                    MetaKeyword = "yamaha silent guitar",
+                    MetaDescription = "Yamaha Silent Guitar SLG200S.",
+                    CreatedBy = "Seeder",
+                    UpdatedBy = "Seeder"
+                },
+
+                new SanPham
+                {
+                    MaSP = "SP021",
+                    TenSP = "Casio CTK-3500 (ngừng kinh doanh)",
+                    MaLoai = "L004",
+                    MaTH = "TH004",
+                    GiaNhap = 3600000,
+                    DonGia = 4500000,
+                    SoLuongTon = 0,
+                    HinhAnh = "casio-ctk3500.jpg",
+                    MoTa = "Đàn Organ Casio CTK-3500 đã ngừng kinh doanh.",
+                    TT = false,
+                    MetaTitle = "casio-ctk3500",
+                    MetaKeyword = "casio ctk3500 organ",
+                    MetaDescription = "Casio CTK-3500.",
                     CreatedBy = "Seeder",
                     UpdatedBy = "Seeder"
                 }

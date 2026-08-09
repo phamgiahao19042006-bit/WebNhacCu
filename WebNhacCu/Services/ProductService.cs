@@ -40,12 +40,44 @@ namespace WebNhacCu.Services
         public async Task<(List<ProductDTO> Items, int TotalItems)> GetProductsAsync(ProductQueryDTO query)
         {
             query.Page = Math.Max(query.Page, 1);
-            query.PageSize = Math.Max(query.PageSize, 1);
+
+            var allowedPageSizes = new[] { 8, 12, 24 };
+            if (!allowedPageSizes.Contains(query.PageSize))
+            {
+                query.PageSize = 12;
+            }
+
             var products = _context.SanPhams
                 .AsNoTracking()
                 .Include(x => x.LoaiSP)
                 .Include(x => x.ThuongHieu)
                 .Where(x => x.TT);
+
+            if (!string.IsNullOrWhiteSpace(query.Keyword))
+            {
+                var keyword = query.Keyword.Trim();
+                products = products.Where(x => x.TenSP.Contains(keyword));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.CategoryId))
+            {
+                products = products.Where(x => x.MaLoai == query.CategoryId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.BrandId))
+            {
+                products = products.Where(x => x.MaTH == query.BrandId);
+            }
+
+            products = query.SortBy switch
+            {
+                "price_asc" => products.OrderBy(x => x.DonGia),
+                "price_desc" => products.OrderByDescending(x => x.DonGia),
+                "newest" => products.OrderByDescending(x => x.CreatedDate),
+                "name_asc" => products.OrderBy(x => x.TenSP),
+                "name_desc" => products.OrderByDescending(x => x.TenSP),
+                _ => products.OrderByDescending(x => x.CreatedDate)
+            };
 
             var totalItems = await products.CountAsync();
 

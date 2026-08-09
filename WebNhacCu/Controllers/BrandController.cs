@@ -1,12 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebNhacCu.Interfaces;
 
 namespace WebNhacCu.Controllers
 {
     public class BrandController : Controller
     {
-        public IActionResult Index()
+        private readonly IBrandService _brandService;
+
+        public BrandController(IBrandService brandService)
         {
-            return View();
+            _brandService = brandService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var brands = await _brandService.GetAllAsync();
+            return View(brands);
         }
     }
 }

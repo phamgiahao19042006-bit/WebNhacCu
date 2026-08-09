@@ -8,10 +8,17 @@ namespace WebNhacCu.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
+        private readonly IBrandService _brandService;
 
-        public ProductController(IProductService productService)
+        public ProductController(
+            IProductService productService,
+            ICategoryService categoryService,
+            IBrandService brandService)
         {
             _productService = productService;
+            _categoryService = categoryService;
+            _brandService = brandService;
         }
 
         // Danh sách sản phẩm
@@ -23,7 +30,9 @@ namespace WebNhacCu.Controllers
             {
                 Products = result.Items,
                 TotalItems = result.TotalItems,
-                Query = query
+                Query = query,
+                Categories = await _categoryService.GetAllAsync(),
+                Brands = await _brandService.GetAllAsync()
             };
 
             return View(viewModel);

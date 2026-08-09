@@ -1,12 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebNhacCu.Interfaces;
 
 namespace WebNhacCu.Controllers
 {
     public class CategoryController : Controller
     {
-        public IActionResult Index()
+        private readonly ICategoryService _categoryService;
+
+        public CategoryController(ICategoryService categoryService)
         {
-            return View();
+            _categoryService = categoryService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var categories = await _categoryService.GetAllAsync();
+            return View(categories);
         }
     }
 }

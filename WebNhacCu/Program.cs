@@ -55,17 +55,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Nếu Hào KHÔNG DÙNG DataSeeder thì xóa hoặc comment dòng 15 bị lỗi lại:
-// DataSeeder.SeedData(context); 
-
-// HOẶC nếu Hào DÙNG DataSeeder thì phải gọi qua Scope như sau:
-/*
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<WebNhacCuContext>();
-    // DataSeeder.SeedData(context); // Bật lại nếu dự án có file DataSeeder.cs
-}
-*/
-
 app.Run();

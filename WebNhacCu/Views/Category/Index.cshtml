@@ -1,0 +1,42 @@
+﻿@using CoreDatabase.Models
+@model List<LoaiSP>
+
+@{
+    ViewData["Title"] = "Danh mục sản phẩm";
+}
+
+<h2>Danh mục sản phẩm</h2>
+
+@if (!Model.Any())
+{
+    <p>Chưa có danh mục nào.</p>
+}
+else
+{
+    <div class="row">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.TenLoai</h5>
+
+                        @if (!string.IsNullOrEmpty(item.MoTa))
+                        {
+                            <p class="card-text">@item.MoTa</p>
+                        }
+
+                        <a asp-controller="Product"
+                           asp-action="Index"
+                           asp-route-categoryId="@item.MaLoai"
+                           class="btn btn-primary btn-sm">
+                            Xem sản phẩm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+}

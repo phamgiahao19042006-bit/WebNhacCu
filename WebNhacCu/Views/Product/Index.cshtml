@@ -1,4 +1,5 @@
 ﻿@model WebNhacCu.Models.ViewModels.ProductViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
     ViewData["Title"] = "Sản phẩm";
@@ -6,24 +7,53 @@
 
 <h2>Danh sách sản phẩm</h2>
 
+<form asp-action="Index" method="get" class="mb-3">
+
+    <input type="text"
+           asp-for="Query.Keyword"
+           placeholder="Nhập tên sản phẩm..." />
+
+    <select asp-for="Query.CategoryId"
+            asp-items="@(new SelectList(Model.Categories, "MaLoai", "TenLoai"))">
+        <option value="">-- Tất cả loại --</option>
+    </select>
+
+    <select asp-for="Query.BrandId"
+            asp-items="@(new SelectList(Model.Brands, "MaTH", "TenTH"))">
+        <option value="">-- Tất cả thương hiệu --</option>
+    </select>
+
+    <select asp-for="Query.SortBy">
+        <option value="">-- Sắp xếp mặc định --</option>
+        <option value="price_asc">Giá tăng dần</option>
+        <option value="price_desc">Giá giảm dần</option>
+        <option value="newest">Mới nhất</option>
+        <option value="name_asc">Tên A → Z</option>
+        <option value="name_desc">Tên Z → A</option>
+    </select>
+
+    <select asp-for="Query.PageSize">
+        <option value="8">8 / trang</option>
+        <option value="12">12 / trang</option>
+        <option value="24">24 / trang</option>
+    </select>
+
+    <button type="submit">
+        Tìm kiếm
+    </button>
+
+</form>
+
 @if (!Model.Products.Any())
 {
-    <p>Không có sản phẩm.</p>
+    <div class="alert alert-warning">
+        <p class="mb-1">Không tìm thấy sản phẩm phù hợp.</p>
+        <p class="mb-2">Thử thay đổi từ khóa hoặc bộ lọc.</p>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">Xóa bộ lọc</a>
+    </div>
 }
 else
 {
-    <form asp-action="Index" method="get" class="mb-3">
-
-        <input type="text"
-               name="keyword"
-               value="@ViewBag.Keyword"
-               placeholder="Nhập tên sản phẩm..." />
-
-        <button type="submit">
-            Tìm kiếm
-        </button>
-
-    </form>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -89,7 +119,11 @@ else
                 {
                     <a asp-action="Index"
                        asp-route-page="@i"
-                       asp-route-keyword="@ViewBag.Keyword">
+                       asp-route-keyword="@Model.Query.Keyword"
+                       asp-route-categoryId="@Model.Query.CategoryId"
+                       asp-route-brandId="@Model.Query.BrandId"
+                       asp-route-sortBy="@Model.Query.SortBy"
+                       asp-route-pageSize="@Model.Query.PageSize">
                         @i
                     </a>
                 }
