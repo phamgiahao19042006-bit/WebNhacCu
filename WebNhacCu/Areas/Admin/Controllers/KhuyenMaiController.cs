@@ -104,7 +104,7 @@ namespace WebNhacCu.Areas.Admin.Controllers
             return View(km);
         }
 
-        // GET: Admin/KhuyenMai/Edit/KM0001
+        // GET: Admin/KhuyenMai/Edit/
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -118,37 +118,35 @@ namespace WebNhacCu.Areas.Admin.Controllers
 
         // POST: Admin/KhuyenMai/Edit
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, KhuyenMai km)
+        public async Task<IActionResult> Edit(KhuyenMai model)
         {
-            if (id != km.MaKM) return BadRequest();
-
-            ModelState.Remove("CTKhuyenMais");
-            ModelState.Remove("CreatedBy");
-            ModelState.Remove("UpdatedBy");
-
-            if (ModelState.IsValid)
+            try
             {
-                var existingKM = await _context.KhuyenMais.FindAsync(id);
-                if (existingKM != null)
+                var kmInDb = await _context.KhuyenMais.FindAsync(model.MaKM);
+
+                if (kmInDb != null)
                 {
-                    existingKM.TenKhuyenMai = km.TenKhuyenMai;
-                    existingKM.LoaiGiam = km.LoaiGiam;
-                    existingKM.GiaTriGiam = km.GiaTriGiam;
-                    existingKM.NgayBatDau = km.NgayBatDau;
-                    existingKM.NgayKetThuc = km.NgayKetThuc;
-                    existingKM.DieuKienApDung = km.DieuKienApDung;
+                    kmInDb.TenKhuyenMai = model.TenKhuyenMai;
+                    kmInDb.LoaiGiam = model.LoaiGiam;
+                    kmInDb.GiaTriGiam = model.GiaTriGiam;
+                    kmInDb.NgayBatDau = model.NgayBatDau;
+                    kmInDb.NgayKetThuc = model.NgayKetThuc;
+                    kmInDb.DieuKienApDung = model.DieuKienApDung;
 
-                    // Ép giá trị trạng thái chuẩn từ Form
-                    var ttForm = Request.Form["TT"].ToString();
-                    existingKM.TT = ttForm.Contains("true") || ttForm.Contains("on");
+                    // 💥 Gán lại Trạng Thái (Đảm bảo tên thuộc tính TrangThai khớp với Model KhuyenMai.cs)
+                    kmInDb.TT = model.TT;
 
-                    _context.Update(existingKM);
+                    _context.KhuyenMais.Update(kmInDb);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
                 }
+
+                return RedirectToAction("Index", "KhuyenMai", new { area = "Admin" });
             }
-            return View(km);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi lưu: " + ex.Message);
+                return View(model);
+            }
         }
 
         // 3. XÓA KHUYẾN MÃI (POST AJAX)

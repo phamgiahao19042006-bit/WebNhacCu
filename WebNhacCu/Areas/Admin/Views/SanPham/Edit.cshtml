@@ -1,49 +1,132 @@
-﻿@model CoreDatabase.Models.ThuongHieu
+﻿@model CoreDatabase.Models.SanPham
 
 @{
-    ViewData["Title"] = "Sửa Thương Hiệu";
+    ViewData["Title"] = "Chỉnh Sửa Sản Phẩm";
     Layout = "~/Areas/Admin/Views/Shared/_admin.cshtml";
 }
 
-<!-- Nhúng thư viện thông báo SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<div class="container-fluid p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-uppercase m-0">[SỬA THƯƠNG HIỆU: @Model.MaTH]</h2>
-        <a href="/Admin/ThuongHieu" class="btn btn-outline-secondary px-4">Quay lại</a>
+<div class="container-fluid px-4 mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary font-weight-bold">Chỉnh Sửa Sản Phẩm</h2>
+        <!-- Nút Quay lại danh sách -->
+        <a href="/Admin/SanPham/Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+        </a>
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 p-4" style="border-radius: 8px;">
-                <!-- Để action trống ("") để nó submit chính xác vào URL hiện tại mà không bị lỗi 404 -->
-                <form action="" method="post">
-                    @Html.AntiForgeryToken()
-                    
-                    <input type="hidden" asp-for="MaTH" />
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white font-weight-bold">
+            THÔNG TIN SẢN PHẨM: @Model?.MaSP
+        </div>
+        <div class="card-body">
+            <form action="/Admin/SanPham/Edit" method="post">
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Mã thương hiệu</label>
-                        <input type="text" class="form-control bg-light" value="@Model.MaTH" disabled />
+                <!-- Khóa chính giấu ẩn + hiển thị readonly -->
+                <input type="hidden" name="MaSP" value="@Model?.MaSP" />
+
+                <div class="row">
+                    <!-- Mã sản phẩm -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label font-weight-bold">Mã sản phẩm</label>
+                        <input class="form-control bg-light" value="@Model?.MaSP" readonly />
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tên thương hiệu <span class="text-danger">*</span></label>
-                        <input asp-for="TenTH" class="form-control" required />
+                    <!-- Tên sản phẩm -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label font-weight-bold">Tên sản phẩm</label>
+                        <input name="TenSP" class="form-control" value="@Model?.TenSP" required />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Loại sản phẩm -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label font-weight-bold">Loại sản phẩm</label>
+                        <select name="MaLoai" class="form-select form-control">
+                            <option value="">-- Chọn Loại Sản Phẩm --</option>
+                            @if (ViewBag.DsLoai != null)
+                            {
+                                foreach (var item in ViewBag.DsLoai)
+                                {
+                                    <option value="@item.MaLoai" selected="@(item.MaLoai == Model?.MaLoai)">
+                                        @item.TenLoai
+                                    </option>
+                                }
+                            }
+                        </select>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Quốc gia</label>
-                        <input asp-for="QuocGia" class="form-control" placeholder="Nhập quốc gia..." />
+                    <!-- Thương hiệu -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label font-weight-bold">Thương hiệu</label>
+                        <select name="MaTH" class="form-select form-control">
+                            <option value="">-- Chọn Thương Hiệu --</option>
+                            @if (ViewBag.DsThuongHieu != null)
+                            {
+                                foreach (var item in ViewBag.DsThuongHieu)
+                                {
+                                    <option value="@item.MaTH" selected="@(item.MaTH == Model?.MaTH)">
+                                        @item.TenTH
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label font-weight-bold">Giá bán (VNĐ)</label>
+                        <input name="DonGia" type="number" class="form-control" value="@Model?.DonGia" min="0" required />
                     </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn text-white fw-bold px-4" style="background-color: #c9a227;">Cập nhật</button>
-                        <a href="/Admin/ThuongHieu" class="btn btn-outline-secondary px-4">Hủy</a>
+                    <!-- Số lượng tồn -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label font-weight-bold">Số lượng tồn</label>
+                        <input name="SoLuongTon" type="number" class="form-control" value="@Model?.SoLuongTon" min="0" />
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="row">
+                    <!-- Hình ảnh -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label font-weight-bold">Tên File / Đường dẫn hình ảnh</label>
+                        <input name="HinhAnh" class="form-control" value="@Model?.HinhAnh" />
+                        @if (!string.IsNullOrEmpty(Model?.HinhAnh))
+                        {
+                            <div class="mt-2">
+                                <small class="text-muted d-block mb-1">Ảnh hiện tại:</small>
+                                <img src="~/images/@Model.HinhAnh" alt="Ảnh sản phẩm" class="img-thumbnail" style="max-height: 100px;"
+                                     onerror="this.onerror=null; this.src='/images/no-image.png';" />
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Trạng thái -->
+                    <div class="col-md-6 mb-3 d-flex align-items-center">
+                        <div class="form-check form-switch mt-3">
+                            <input class="form-check-input" type="checkbox" name="TT" value="true" id="flexSwitchCheckDefault" @(Model?.TT == true ? "checked" : "")>
+                            <label class="form-check-label font-weight-bold ms-2" for="flexSwitchCheckDefault">
+                                Trạng thái (Đang kinh doanh)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mô tả -->
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Mô tả sản phẩm</label>
+                    <textarea name="MoTa" class="form-control" rows="4">@Model?.MoTa</textarea>
+                </div>
+
+                <!-- Cụm nút Lưu & Hủy -->
+                <div class="mt-4 border-top pt-3 text-end">
+                    <button type="submit" class="btn btn-success px-4 font-weight-bold">
+                        <i class="fas fa-save me-1"></i> Lưu Thay Đổi
+                    </button>
+                    <a href="/Admin/SanPham/Index" class="btn btn-secondary px-4 ms-2">Hủy</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>

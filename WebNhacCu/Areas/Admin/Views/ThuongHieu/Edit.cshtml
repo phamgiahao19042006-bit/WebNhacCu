@@ -14,29 +14,32 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card shadow-sm border-0 p-4" style="border-radius: 8px;">
-                <form asp-area="Admin" asp-controller="ThuongHieu" asp-action="Edit" method="post">
+                <form action="/Admin/ThuongHieu/Edit" method="post">
                     @Html.AntiForgeryToken()
                     
-                    <input type="hidden" asp-for="MaTH" />
+                    <!-- Khóa chính ẩn để binding vào model -->
+                    <input type="hidden" name="MaTH" value="@Model?.MaTH" />
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Mã thương hiệu</label>
-                        <input type="text" class="form-control bg-light" value="@Model.MaTH" disabled />
+                        <label class="form-label font-weight-bold">Mã thương hiệu</label>
+                        <input class="form-control bg-light" value="@Model?.MaTH" readonly />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Tên thương hiệu <span class="text-danger">*</span></label>
-                        <input asp-for="TenTH" class="form-control" required />
+                        <label class="form-label font-weight-bold">Tên thương hiệu</label>
+                        <input name="TenTH" class="form-control" value="@Model?.TenTH" required />
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Quốc gia</label>
-                        <input asp-for="QuocGia" class="form-control" placeholder="Nhập quốc gia (ví dụ: Nhật Bản, Hàn Quốc...)" />
+                    <!-- 💥 THÊM Ô NHẬP QUỐC GIA VÀO ĐÂY -->
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Quốc gia</label>
+                        <input name="QuocGia" class="form-control" value="@Model?.QuocGia" placeholder="Ví dụ: Nhật Bản, Mỹ, Đức..." />
                     </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn text-white fw-bold px-4" style="background-color: #c9a227;">Cập nhật</button>
-                        <a href="/Admin/ThuongHieu" class="btn btn-outline-secondary px-4">Hủy</a>
+                    <!-- Nút Lưu & Hủy -->
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">Lưu Thay Đổi</button>
+                        <a href="/Admin/ThuongHieu/Index" class="btn btn-secondary ms-2">Hủy</a>
                     </div>
                 </form>
             </div>

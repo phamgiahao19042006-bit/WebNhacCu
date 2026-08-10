@@ -100,17 +100,17 @@
                                     <td>@item.NgayBatDau.ToString("dd/MM/yyyy")</td>
                                     <td>@item.NgayKetThuc.ToString("dd/MM/yyyy")</td>
                                     <td class="text-start">@(string.IsNullOrEmpty(item.DieuKienApDung) ? "Tất cả sản phẩm" : item.DieuKienApDung)</td>
-                                    <td class="text-center">
-                                        @if (item.TT == true || (item.TT != null && item.TT.ToString().ToLower() == "true"))
+                                    <td>
+                                        @if (item.TT == true) // Hoặc item.TrangThai == 1 / item.TT == true
                                         {
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
-                                                <i class="fa-solid fa-circle-check me-1"></i> Đang hoạt động
+                                            <span class="badge bg-success text-white px-2 py-1">
+                                                <i class="fas fa-check-circle me-1"></i> Hoạt động
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill">
-                                                <i class="fa-solid fa-circle-xmark me-1"></i> Đã ngưng
+                                            <span class="badge bg-secondary text-white px-2 py-1">
+                                                <i class="fas fa-times-circle me-1"></i> Đã ngưng
                                             </span>
                                         }
                                     </td>

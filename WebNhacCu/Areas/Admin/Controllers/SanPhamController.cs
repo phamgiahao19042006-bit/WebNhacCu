@@ -97,65 +97,62 @@ namespace WebNhacCu.Areas.Admin.Controllers
             return View(sanPham);
         }
 
-        // 3. CHỈNH SỬA SẢN PHẨM - GET
-        public async Task<IActionResult> Edit(string? id)
+        // 3. CHỈNH SỬA SẢN PHẨM 
+        // GET: Admin/SanPham/Edit/SP015
+        // GET: Admin/SanPham/Edit/SP015
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
         {
-            if (id == null) return NotFound();
+            if (string.IsNullOrEmpty(id)) return NotFound();
 
             var sanPham = await _context.SanPhams.FindAsync(id);
             if (sanPham == null) return NotFound();
 
-            ViewBag.MaLoai = new SelectList(_context.LoaiSPs, "MaLoai", "TenLoai", sanPham.MaLoai);
-            ViewBag.MaTH = new SelectList(_context.ThuongHieus, "MaTH", "TenTH", sanPham.MaTH);
+            ViewBag.DsLoai = _context.LoaiSPs.ToList();
+            ViewBag.DsThuongHieu = _context.ThuongHieus.ToList();
+
             return View(sanPham);
         }
 
-        // 3. CHỈNH SỬA SẢN PHẨM - POST
+        // POST: Admin/SanPham/Edit/SP015
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, SanPham sanPham, IFormFile? HinhAnhFile)
+        public async Task<IActionResult> Edit(SanPham model)
         {
-            if (id != sanPham.MaSP) return NotFound();
-
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var spInDb = await _context.SanPhams.FindAsync(model.MaSP);
+
+                if (spInDb != null)
                 {
-                    // Nếu chọn ảnh mới thì cập nhật, không thì giữ nguyên ảnh cũ
-                    if (HinhAnhFile != null && HinhAnhFile.Length > 0)
-                    {
-                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(HinhAnhFile.FileName);
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/sanpham", fileName);
+                    spInDb.TenSP = model.TenSP;
+                    spInDb.MaLoai = model.MaLoai;
+                    spInDb.MaTH = model.MaTH;
+                    spInDb.SoLuongTon = model.SoLuongTon;
 
-                        var directory = Path.GetDirectoryName(filePath);
-                        if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                    // 💥 ĐÃ ĐỔI THÀNH DonGia
+                    spInDb.DonGia = model.DonGia;
 
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await HinhAnhFile.CopyToAsync(stream);
-                        }
-                        sanPham.HinhAnh = "/images/sanpham/" + fileName;
-                    }
+                    spInDb.HinhAnh = model.HinhAnh;
+                    spInDb.MoTa = model.MoTa;
+                    spInDb.TT = model.TT;
 
-                    sanPham.UpdatedDate = DateTime.Now;
-                    _context.Update(sanPham);
+                    _context.SanPhams.Update(spInDb);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.SanPhams.Any(e => e.MaSP == id)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
 
-            ViewBag.MaLoai = new SelectList(_context.LoaiSPs, "MaLoai", "TenLoai", sanPham.MaLoai);
-            ViewBag.MaTH = new SelectList(_context.ThuongHieus, "MaTH", "TenTH", sanPham.MaTH);
-            return View(sanPham);
+                return RedirectToAction("Index", "SanPham", new { area = "Admin" });
+            }
+            catch (Exception ex)
+            {
+                ViewBag.DsLoai = _context.LoaiSPs.ToList();
+                ViewBag.DsThuongHieu = _context.ThuongHieus.ToList();
+                ModelState.AddModelError("", "Lỗi lưu: " + ex.Message);
+                return View(model);
+            }
         }
 
         // 4. XÓA SẢN PHẨM
-        
+
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {

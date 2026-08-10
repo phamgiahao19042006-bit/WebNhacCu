@@ -67,7 +67,7 @@ namespace WebNhacCu.Areas.Admin.Controllers
 
         // 3. CHỈNH SỬA 
 
-        // GET: Admin/ThuongHieu/Edit/TH01
+        // GET: Admin/ThuongHieu/Edit/TH010
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -79,38 +79,30 @@ namespace WebNhacCu.Areas.Admin.Controllers
             return View(thuongHieu);
         }
 
-        // POST: Admin/ThuongHieu/Edit/TH01
+        // POST: Admin/ThuongHieu/Edit/TH010
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, ThuongHieu thuongHieu)
+        public async Task<IActionResult> Edit(ThuongHieu model)
         {
-            if (id != thuongHieu.MaTH) return NotFound();
-
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var thInDb = await _context.ThuongHieus.FindAsync(model.MaTH);
+
+                if (thInDb != null)
                 {
-                    var existingTH = await _context.ThuongHieus.FindAsync(id);
-                    if (existingTH != null)
-                    {
-                        existingTH.TenTH = thuongHieu.TenTH;
-                        existingTH.QuocGia = thuongHieu.QuocGia;
+                    thInDb.TenTH = model.TenTH;
+                    thInDb.QuocGia = model.QuocGia;
 
-                        await _context.SaveChangesAsync();
-
-                        // Đánh dấu để View Edit biết là đã lưu xong
-                        ViewBag.IsSuccess = true;
-                        ViewBag.Message = "Cập nhật thông tin thương hiệu thành công!";
-
-                        return View(thuongHieu);
-                    }
+                    _context.ThuongHieus.Update(thInDb);
+                    await _context.SaveChangesAsync();
                 }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Lỗi cập nhật: " + ex.Message);
-                }
+
+                return RedirectToAction("Index", "ThuongHieu", new { area = "Admin" });
             }
-            return View(thuongHieu);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi lưu: " + ex.Message);
+                return View(model);
+            }
         }
 
         // 4. XÓA THƯƠNG HIỆU - POST

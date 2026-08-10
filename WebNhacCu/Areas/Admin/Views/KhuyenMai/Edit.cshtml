@@ -67,11 +67,12 @@
                     <input type="text" name="DieuKienApDung" value="@Model?.DieuKienApDung" class="form-control" />
                 </div>
 
-                <div class="col-md-12">
-                    <div class="form-check form-switch mt-2">
-                        <input class="form-check-input" type="checkbox" asp-for="TT" checked />
-                        <label class="form-check-label fw-bold text-dark" asp-for="TT">Kích hoạt ngay (Trạng thái)</label>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Trạng Thái</label>
+                    <select name="TrangThai" class="form-select form-control">
+                        <option value="true" selected="@(Model?.TT == true)">Hoạt động</option>
+                        <option value="false" selected="@(Model?.TT == false)">Ngừng hoạt động</option>
+                    </select>
                 </div>
             </div>
 
